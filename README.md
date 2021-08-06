@@ -43,7 +43,7 @@ if __name__ == '__main__:
 this support python 3.6+ (may be -)
 ## About
 i created this with ***COFFE*** (not real) standard
-COFFE - **C**reated **O**nly **F**or **F**and **E**ducation
+COFFE - **C**reated **O**nly **F**or **F**un **E**ducation
 ## FAQ
 q: why it is needed, be cause we have marshmallow, pydantic e t.c.
 
