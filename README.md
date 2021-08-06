@@ -10,7 +10,7 @@ $ git clone github.com/yourun-proger/kefir.git
 so easy)
 ```py
 from pprint import pprint
-import kefir
+from kefir import kefir
 class SomeCoolClass:
   def __init__(self, some_attr):
     self.some_attr = some_attr
@@ -23,6 +23,7 @@ more real example
 ```py
 from flask import Flask, jsonify, request
 from my_models import SomeModel
+from kefir import kefir
 app = Flask(__name__)
 @app.get('/mymodels_please')
 def check():
