@@ -3,7 +3,7 @@
 ![](https://img.shields.io/github/license/yourun-proger/kefir)
 
 # kefir
-keifr is a library for convert objects of classes (or models) to dict
+kefir is a library for convert objects of classes (or models) to dict
 this is need for creating some APIs
 ## Install
 ```bash
