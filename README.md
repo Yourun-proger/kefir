@@ -11,10 +11,10 @@ so easy)
 ```py
 from pprint import pprint
 from kefir import kefir
-class SomeCoolClass:
+class SomeCoolClass: #NOTE: today kefir does not support class attributes that are objects of another class
   def __init__(self, some_attr):
     self.some_attr = some_attr
-some = SomeCoolClass('keifr')
+some = SomeCoolClass('keifr') # 'keifr only!'
 some_dict = kefir.dump_to_dict(some)
 pprint(some_dict)
 >>> {'some_attr': 'keifr'}
@@ -22,17 +22,16 @@ pprint(some_dict)
 more real example
 ```py
 from flask import Flask, jsonify, request
-from my_models import SomeModel
+from my_models import SomeModel #NOTE: today kefir does not support one2one, one2many, many2many
 from kefir import kefir
 app = Flask(__name__)
-@app.get('/mymodels_please')
+@app.get('/all_models')
 def check():
   all_models = SomeModel.query.all()
   all_models_dict = kefir.dump_to_dict(all_models, one=False)
   return jsonify(all_models_dict)
-@app.get('/onlyonemodel')
-def check_one():
-  model_id = int(request.args('id', 0))
+@app.get('/one_model/<int:mdoel_id>')
+def check_one(model_id):
   one_model = SomeModel.query.get(model_id)
   one_model_dict = kefir.dump_to_dict(one_model)
   return jsonify(one_model_dict)
@@ -42,8 +41,7 @@ if __name__ == '__main__:
 ## Reqs
 this support python 3.6+ (may be -)
 ## About
-i created this with ***COFFE*** (not real) standard
-COFFE - **C**reated **O**nly **F**or **F**un **E**ducation
+i created this with ***COFFE*** (not real) standard - **C**reated **O**nly **F**or **F**un **E**ducation
 ## FAQ
 q: why it is needed, be cause we have marshmallow, pydantic e t.c.
 
@@ -57,4 +55,4 @@ please no contribute!
 ## Conclusion
 get star if u like this, please)
 
-Thanks for reading and have a good day!
+*Thanks for reading and have a good day!*
