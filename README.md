@@ -1,3 +1,7 @@
+![](https://img.shields.io/github/v/release/yourun-proger/kefir)
+![](https://img.shields.io/github/languages/code-size/yourun-proger/kefir)
+![](https://img.shields.io/github/license/yourun-proger/kefir)
+
 # kefir
 keifr is a library for convert objects of classes (or models) to dict
 this is need for creating some APIs
