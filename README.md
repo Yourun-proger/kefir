@@ -49,11 +49,11 @@ q: why it is needed, be cause we have marshmallow, pydantic e t.c.
 
 a: i want to be a part of "e t.c." + this is very cool for small APIs
 
-q: Releas on PyPi?
+q: Release on PyPi?
 
 a: in progress. Please waiting)
 ## Contibuting
-please no contribue (we have no 0.0.1 version)
+please no contribute!
 ## Conclusion
 get star if u like this, please)
 
