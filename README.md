@@ -11,22 +11,28 @@ $ cd your_project_dir
 $ git clone github.com/yourun-proger/kefir.git
 ```
 ## Work
-so easy)
+Realy easy!
 ```py
 from pprint import pprint
 from kefir import kefir
-class SomeCoolClass: #NOTE: today kefir does not support nested data
+class SomeClass:
   def __init__(self, some_attr):
     self.some_attr = some_attr
-some = SomeCoolClass('keifr') # 'keifr only!'
-some_dict = kefir.dump_to_dict(some)
-pprint(some_dict)
->>> {'some_attr': 'keifr'}
+class SomeOtherClass:
+  def __init__(self, some_attr, some_other_attr):
+    self.some_attr = some_attr
+    self.some_other_attr = some_other_attr
+some = SomeClass('some kefir')
+some_dict = kefir.dump_to_dict(some) # {'some_attr': 'some kefir'}
+some_other = SomeOtherClass('some other kefir', some)
+some_other_dict = kefir.dump_to_dict(some_other)
+pprint(some_other_dict)
+>>> {'some_attr': 'some other kefir', 'some_other_attr': {'some_attr': 'some kefir'}}
 ```
-more real example
+real example
 ```py
 from flask import Flask, jsonify, request
-from my_models import SomeModel #NOTE: today kefir does not support one2one, one2many, many2many
+from my_models import SomeModel #NOTE: today kefir does not support relations
 from kefir import kefir
 app = Flask(__name__)
 @app.get('/all_models')
@@ -34,7 +40,7 @@ def check():
   all_models = SomeModel.query.all()
   all_models_dict = kefir.dump_to_dict(all_models, one=False)
   return jsonify(all_models_dict)
-@app.get('/one_model/<int:mdoel_id>')
+@app.get('/one_model/<int:model_id>')
 def check_one(model_id):
   one_model = SomeModel.query.get(model_id)
   one_model_dict = kefir.dump_to_dict(one_model)
@@ -43,7 +49,7 @@ if __name__ == '__main__:
   app.run()
 ```
 ## Reqs
-this support python 3.6+ (may be -)
+this support python 3.6+ (may be 3.5-)
 ## About
 i created this with ***COFFE*** (not real) standard - **C**reated **O**nly **F**or **F**un **E**ducation
 ## FAQ
