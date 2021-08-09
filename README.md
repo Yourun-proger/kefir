@@ -15,7 +15,7 @@ so easy)
 ```py
 from pprint import pprint
 from kefir import kefir
-class SomeCoolClass: #NOTE: today kefir does not support class attributes that are objects of another class
+class SomeCoolClass: #NOTE: today kefir does not support nested data
   def __init__(self, some_attr):
     self.some_attr = some_attr
 some = SomeCoolClass('keifr') # 'keifr only!'
