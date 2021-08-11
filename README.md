@@ -51,7 +51,9 @@ if __name__ == '__main__:
 ## Reqs
 this support python 3.6+ (may be 3.5-)
 ## About
-i created this with ***COFFE*** (not real) standard - **C**reated **O**nly **F**or **F**un **E**ducation
+i created this only for fun
+
+*But i true think this project become big and very cool ( 11.08.2021 )*
 ## FAQ
 q: why it is needed, be cause we have marshmallow, pydantic e t.c.
 
