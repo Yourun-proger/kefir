@@ -4,6 +4,7 @@
 
 # kefir
 kefir is a library for convert objects of classes (or models) to dict
+
 this is need for creating some APIs
 ## Install
 ```bash
@@ -11,7 +12,7 @@ $ cd your_project_dir
 $ git clone github.com/yourun-proger/kefir.git
 ```
 ## Work
-Realy easy!
+Easy
 ```py
 from pprint import pprint
 from kefir import kefir
@@ -63,8 +64,10 @@ q: Release on PyPi?
 
 a: in progress. Please waiting)
 ## Contibuting
-please no contribute!
+today this project is very raw and when it has no 1.0 version this isnt't needed to pr or issues
+
+but you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
 ## Conclusion
-get star if u like this, please)
+get star if you like this, please)
 
 *Thanks for reading and have a good day!*
