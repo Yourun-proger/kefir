@@ -24,9 +24,9 @@ class SomeOtherClass:
     self.some_attr = some_attr
     self.some_other_attr = some_other_attr
 some = SomeClass('some kefir')
-some_dict = kefir.dump_to_dict(some) # {'some_attr': 'some kefir'}
+some_dict = kefir.dump(some) # {'some_attr': 'some kefir'}
 some_other = SomeOtherClass('some other kefir', some)
-some_other_dict = kefir.dump_to_dict(some_other)
+some_other_dict = kefir.dumpt(some_other)
 pprint(some_other_dict)
 >>> {'some_attr': 'some other kefir', 'some_other_attr': {'some_attr': 'some kefir'}}
 ```
@@ -36,15 +36,10 @@ from flask import Flask, jsonify, request
 from my_models import SomeModel #NOTE: today kefir does not support relations
 from kefir import kefir
 app = Flask(__name__)
-@app.get('/all_models')
-def check():
-  all_models = SomeModel.query.all()
-  all_models_dict = kefir.dump_to_dict(all_models, one=False)
-  return jsonify(all_models_dict)
-@app.get('/one_model/<int:model_id>')
+@app.get('/model/<int:model_id>')
 def check_one(model_id):
   one_model = SomeModel.query.get(model_id)
-  one_model_dict = kefir.dump_to_dict(one_model)
+  one_model_dict = kefir(one_model)
   return jsonify(one_model_dict)
 if __name__ == '__main__:
   app.run()
