@@ -15,7 +15,7 @@ $ git clone github.com/yourun-proger/kefir.git
 Easy
 ```py
 from pprint import pprint
-from kefir import kefir
+from kefir.kefir import Kefir
 class SomeClass:
   def __init__(self, some_attr):
     self.some_attr = some_attr
@@ -24,23 +24,28 @@ class SomeOtherClass:
     self.some_attr = some_attr
     self.some_other_attr = some_other_attr
 some = SomeClass('some kefir')
-some_dict = kefir.dump(some) # {'some_attr': 'some kefir'}
+some_dict = Kefir.dump(some) # {'some_attr': 'some kefir'}
 some_other = SomeOtherClass('some other kefir', some)
-some_other_dict = kefir.dumpt(some_other)
+some_other_dict = Kefir.dumpt(some_other)
 pprint(some_other_dict)
 >>> {'some_attr': 'some other kefir', 'some_other_attr': {'some_attr': 'some kefir'}}
 ```
 real example
 ```py
 from flask import Flask, jsonify, request
-from my_models import SomeModel #NOTE: today kefir does not support relations
-from kefir import kefir
+from my_models import db, User, Order #NOTE: today kefir does not support relations (one2one-50%, one2many-NO, many2many-true don't know :P)
+from kefir.kefir import Kefir
 app = Flask(__name__)
-@app.get('/model/<int:model_id>')
-def check_one(model_id):
-  one_model = SomeModel.query.get(model_id)
-  one_model_dict = kefir(one_model)
-  return jsonify(one_model_dict)
+kef = Kefir(
+              session=db.session,
+              shorcuts={'users':'user'},
+              objects={'users':User}
+           )
+@app.get('/orders/<int:order_id>')
+def order_view(order_id):
+  order = Order.query.get(order_id) # Order(id=4,adress='some', bill=123, user_id=42)
+  order_dict = Kefir.dump(order)  # {'id':4, 'adress':'some','bill':123,'user':{'name':'Kefir', 'email':'kefir_mail@notreal.uncom'}}
+  return jsonify(order)
 if __name__ == '__main__:
   app.run()
 ```
