@@ -44,7 +44,7 @@ kef = Kefir(
 @app.get('/orders/<int:order_id>')
 def order_view(order_id):
   order = Order.query.get(order_id) # Order(id=4,adress='some', bill=123, user_id=42)
-  order_dict = Kefir.dump(order)  # {'id':4, 'adress':'some','bill':123,'user':{'name':'Kefir', 'email':'kefir_mail@notreal.uncom'}}
+  order_dict = Kefir.dump(order)  # {'id':4, 'adress':'some','bill':123,'user':{'id':42,'name':'Kefir', 'email':'kefir_mail@notreal.uncom'}}
   return jsonify(order)
 if __name__ == '__main__:
   app.run()
