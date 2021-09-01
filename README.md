@@ -16,6 +16,7 @@ Easy
 ```py
 from pprint import pprint
 from kefir.kefir import Kefir
+kef = Kefir()
 class SomeClass:
   def __init__(self, some_attr):
     self.some_attr = some_attr
@@ -24,16 +25,16 @@ class SomeOtherClass:
     self.some_attr = some_attr
     self.some_other_attr = some_other_attr
 some = SomeClass('some kefir')
-some_dict = Kefir.dump(some) # {'some_attr': 'some kefir'}
+some_dict = kef.dump(some) # {'some_attr': 'some kefir'}
 some_other = SomeOtherClass('some other kefir', some)
-some_other_dict = Kefir.dumpt(some_other)
+some_other_dict = kef.dump(some_other)
 pprint(some_other_dict)
 >>> {'some_attr': 'some other kefir', 'some_other_attr': {'some_attr': 'some kefir'}}
 ```
 real example
 ```py
 from flask import Flask, jsonify, request
-from my_models import db, User, Order #NOTE: today kefir does not support relations (one2one-50%, one2many-NO, many2many-true don't know :P)
+from my_models import db, User, Order #NOTE: today kefir does not support all db relations :p
 from kefir.kefir import Kefir
 app = Flask(__name__)
 kef = Kefir(
@@ -44,7 +45,7 @@ kef = Kefir(
 @app.get('/orders/<int:order_id>')
 def order_view(order_id):
   order = Order.query.get(order_id) # Order(id=4,adress='some', bill=123, user_id=42)
-  order_dict = Kefir.dump(order)  # {'id':4, 'adress':'some','bill':123,'user':{'id':42,'name':'Kefir', 'email':'kefir_mail@notreal.uncom'}}
+  order_dict = kef.dump(order)  # {'id':4, 'adress':'some','bill':123,'user':{'id':42,'name':'Kefir', 'email':'kefir_mail@notreal.uncom'}}
   return jsonify(order)
 if __name__ == '__main__:
   app.run()
