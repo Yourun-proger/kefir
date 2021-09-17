@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='kefir',
-    version='0.1.2',
+    version='0.1.1',
     url='http://github.com/yourun-proger/kefir/',
     license='MIT',
     author='Yourun-Proger',
