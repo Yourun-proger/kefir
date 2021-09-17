@@ -10,12 +10,13 @@ this is need for creating some APIs
 ```bash
 $ cd your_project_dir
 $ git clone github.com/yourun-proger/kefir.git
+$ pip install -e .
 ```
 ## Work
 Easy
 ```py
 from pprint import pprint
-from kefir.kefir import Kefir
+from kefir import Kefir
 kef = Kefir()
 class SomeClass:
   def __init__(self, some_attr):
@@ -35,7 +36,7 @@ real example
 ```py
 from flask import Flask, jsonify, request
 from my_models import db, User, Order #NOTE: today kefir does not support all db relations :p
-from kefir.kefir import Kefir
+from kefir import Kefir
 app = Flask(__name__)
 kef = Kefir(
               session=db.session,
@@ -51,7 +52,7 @@ if __name__ == '__main__:
   app.run()
 ```
 ## Reqs
-this support python 3.6+ (may be 3.5-)
+this support python 3.6+
 ## About
 i created this only for fun
 
