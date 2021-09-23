@@ -12,6 +12,7 @@ $ cd your_project_dir
 $ git clone github.com/yourun-proger/kefir.git
 $ pip install -e .
 ```
+**Before installation, it is advisable to create and activate a virtual environment !!!**
 ## Work
 Easy
 ```py
