@@ -9,8 +9,12 @@ this is need for creating some APIs
 ## Install
 ```bash
 $ cd your_project_dir
-$ git clone github.com/yourun-proger/kefir.git
+$ git clone https://github.com/Yourun-proger/kefir.git
 $ pip install -e .
+```
+Or
+```bash
+$ pip install git+https://github.com/Yourun-proger/kefir.git
 ```
 **Before installation, it is advisable to create and activate a virtual environment !!!**
 ## Work
@@ -112,7 +116,7 @@ Output:
              'attr2': 7}}}
 """
 ```
-## Reqs
+## Requirements
 this support python 3.6+
 ## About
 i created this only for fun
@@ -126,7 +130,7 @@ a: The trick is that you don't need to write Schema or add in your project more 
 q: Release on PyPi?
 
 a: in progress. Please waiting)
-## Contibuting
+## Contributing
 today this project is very raw and when it has no 1.0 version this isnt't needed to pr or issues
 
 but you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
