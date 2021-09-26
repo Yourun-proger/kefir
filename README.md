@@ -4,8 +4,6 @@
 
 # kefir
 kefir is a library for convert objects of classes (or models) to dict
-
-this is need for creating some APIs
 ## Install
 ```bash
 $ cd your_project_dir
@@ -60,7 +58,7 @@ def user_view(user_id):
   user_dict = kef.dump(user)  # {'id':42,'name':'Kefir','email':'kefir_mail@notreal.uncom','orders'=[{'id':4,'adress':'some','bill':123}, {'id': 101,'adress':'another','bill':321}]}
   return jsonify(user_dict)
   
-if __name__ == '__main__:
+if __name__ == '__main__':
   app.run()
 ```
 Also see this example:
