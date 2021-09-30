@@ -38,14 +38,14 @@ pprint(some_other_dict)
 real example
 ```py
 from flask import Flask, jsonify, request
-from my_models import db, User, Order #NOTE: today kefir does not support nested relations and many2may probable too :|
+from my_models import db, User, Order
 from kefir import Kefir
 app = Flask(__name__)
 kef = Kefir(
-              session=db.session,
-              shorcuts={'users':'user'},
-              objects={'users':User},
-              rels={'users':['orders']}
+              session=db.session,  # your SQLAlchemy session
+              shorcuts={'users':'user'}, # shorcuts... Change this later
+              objects={'users':User},  # tablename -> TableClass
+              rels={'users':['orders']}  # tablenabe -> [othertables, othertables2] Needs for mark some relations
            )
 @app.get('/orders/<int:order_id>/')
 def order_view(order_id):
