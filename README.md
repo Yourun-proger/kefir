@@ -114,6 +114,9 @@ Output:
              'attr2': 7}}}
 """
 ```
+## Docs
+See [this](https://github.com/Yourun-proger/kefir/wiki/Docs) page
+
 ## Requirements
 this support python 3.6+
 ## About
