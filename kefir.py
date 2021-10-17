@@ -1,11 +1,20 @@
+"""
+Kefir main file
+"""
+try:
+    from flask import Response
+except ImportError:
+    Response = None
+
+
 class Kefir:
     
-    def __init__(self, session=None, objects={}, rels=[], shorcuts={}, ignore=[]):
+    def __init__(self, session=None, objects={}, rels=[], ignore=[], shorcuts={}):
         self.session = session  # SQLAlhcemy session
         self.objects = objects # tablename -> Class; {'users':User} for example. this is needed for relations
         self.rels = rels # some relations of tables. Example: rels={'users':['orders']}. users table is main in rels with orders
-        self.shorcuts = shorcuts  # shorcuts for change table name in converted object
-        self.ignore = ignore  # Table for ignoring
+        self.ignore = ignore
+        self.shorcuts = shorcuts
     
     def _is_custom_class(self, obj):
          return not (
@@ -28,7 +37,7 @@ class Kefir:
 
         return dct[col]
     
-    def dump(self, obj):
+    def dump(self, obj, ignore=[]):
         if isinstance(obj , list):
             lst = []
             for i in obj:
@@ -68,7 +77,7 @@ class Kefir:
                 for col in cols:
                     if self._is_foreign_key(table, col):
                         for i in  self._is_foreign_key(table, col):
-                           if i[0] not in self.ignore:
+                           if i[0] not in ignore:
                                sql = 'SELECT * FROM '+ i[0]  + ' WHERE ' + i[1] + ' = ' + '"' + str(getattr(obj, col)) + '"' + ';'
                                data = self.session.execute(sql).cursor.fetchall()
                                cols = self.session.execute(sql).__dict__['_metadata'].keys
@@ -96,7 +105,7 @@ class Kefir:
                         data = self.session.execute(sql).fetchall()
                         cols = self.session.execute(sql).__dict__['_metadata'].keys
                         if len(data) == 1:
-                            dct[self.shorcuts.get(i, i)] = dict(zip(cols, data))
+                            dct[self.shorcuts.get(i, i)] = self.dump(self.objects[i].query.get(data[0]), [obj.__tablename__])
                         else:
-                            dct[self.shorcuts.get(i, i)] = [dict(zip(cols, i)) for i in data]
+                            dct[self.shorcuts.get(i, i)] = [self.dump(self.objects[i].query.get(j[0]), [obj.__tablename__]) for j in data]
                 return dct
