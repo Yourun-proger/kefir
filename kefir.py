@@ -1,15 +1,10 @@
 """
 Kefir main file
 """
-try:
-    from flask import Response
-except ImportError:
-    Response = None
-
 
 class Kefir:
     
-    def __init__(self, session=None, objects={}, rels=[], ignore=[], shorcuts={}):
+    def __init__(self, session=None, objects={}, rels={}, ignore=(), shorcuts={}):
         self.session = session  # SQLAlhcemy session
         self.objects = objects # tablename -> Class; {'users':User} for example. this is needed for relations
         self.rels = rels # some relations of tables. Example: rels={'users':['orders']}. users table is main in rels with orders
@@ -37,7 +32,7 @@ class Kefir:
 
         return dct[col]
     
-    def dump(self, obj, ignore=[]):
+    def dump(self, obj, ignore=()):
         if isinstance(obj , list):
             lst = []
             for i in obj:
