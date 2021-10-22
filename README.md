@@ -70,7 +70,7 @@ from kefir import Kefir
 class A:
     def __init__(self, attr, attr2):
         self.attr = attr
-        self.attr2 = attr
+        self.attr2 = attr2
 class B:
     def __init__(self, attr, attr2, a):
         self.attr = attr
