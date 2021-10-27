@@ -100,18 +100,16 @@ pprint(kef.dump(c))
 pprint(kef.dump(d))
 """
 Output:
-{'attr': 'kefir', 'attr2': 'kefir'}
-{'a': {'attr': 'kefir', 'attr2': 'kefir'}, 'attr': 'is', 'attr2': 7}
+{'attr': 'kefir', 'attr2': 0.2}
+{'a': {'attr': 'kefir', 'attr2': 0.2}, 'attr': 'is', 'attr2': 7}
 {'attr': 'the',
  'attr2': 42,
- 'b': {'a': {'attr': 'kefir', 'attr2': 'kefir'}, 'attr': 'is', 'attr2': 7}}
+ 'b': {'a': {'attr': 'kefir', 'attr2': 0.2}, 'attr': 'is', 'attr2': 7}}
 {'attr': 'best!',
  'attr2': 10101,
  'c': {'attr': 'the',
        'attr2': 42,
-       'b': {'a': {'attr': 'kefir', 'attr2': 'kefir'},
-             'attr': 'is',
-             'attr2': 7}}}
+       'b': {'a': {'attr': 'kefir', 'attr2': 0.2}, 'attr': 'is', 'attr2': 7}}}
 """
 ```
 ## Docs
