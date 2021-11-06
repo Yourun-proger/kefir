@@ -10,10 +10,6 @@ $ cd your_project_dir
 $ git clone https://github.com/Yourun-proger/kefir.git
 $ pip install -e .
 ```
-Or
-```bash
-$ pip install git+https://github.com/Yourun-proger/kefir.git
-```
 **Before installation, it is advisable to create and activate a virtual environment !!!**
 ## Work
 Easy
