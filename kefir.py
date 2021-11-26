@@ -2,6 +2,15 @@
 Kefir main file
 """
 
+from functools import wraps
+from json import dumps
+
+try:
+    from flask import Response
+except ImportError:
+    Response = None
+
+
 class Kefir:
 
     def __init__(self, session=None, objects={}, rels={}, ignore={}, shorcuts={}):
@@ -40,7 +49,7 @@ class Kefir:
             return lst
         else:
             obj_type = 'class'
-            if "<class 'sqlalchemy.ext.declarative.api.Model'>" in list(map(str, type(obj).mro())):  # looks bad :[
+            if "<class 'sqlalchemy.ext.declarative.api.Model'>" in list(map(str, type(obj).mro())):  # looks bad =_=
                 obj_type = 'model'
 
             if obj_type == 'class':
@@ -59,7 +68,6 @@ class Kefir:
                 else:
                     for key, value in obj.__dict__.items():
                         if not key.startswith('_'):
-
                             if self._is_custom_class(value):
                                 dct[key] = self.dump(value)
                             else:
@@ -73,7 +81,7 @@ class Kefir:
                 for col in cols:
                     if self._is_foreign_key(table, col):
                         for i in self._is_foreign_key(table, col):
-                            if i[0] not in ignore and  i[0] not in self.ignore[obj.__tablename__]:
+                            if i[0] not in ignore and  i[0] not in self.ignore.get(obj.__tablename__,[]):
                                 sql = 'SELECT * FROM ' + i[0] + ' WHERE ' + i[1] + ' = ' + '"' + str(
                                     getattr(obj, col)) + '"' + ';'
                                 data = self.session.execute(sql).cursor.fetchall()
@@ -103,9 +111,35 @@ class Kefir:
                         data = self.session.execute(sql).fetchall()
                         cols = self.session.execute(sql).__dict__['_metadata'].keys
                         if len(data) == 1:
-                            dct[self.shorcuts.get(i, i)] = self.dump(self.objects[i].query.get(data[0]), # Need to parse primary key name
+                            dct[self.shorcuts.get(i, i)] = self.dump(self.objects[i].query.get(data[0]),
                                                                      [obj.__tablename__])
                         else:
                             dct[self.shorcuts.get(i, i)] = [
                                 self.dump(self.objects[i].query.get(j[0]), [obj.__tablename__]) for j in data]
                 return dct
+    
+    def dump_route(self, method):
+        """
+        Special decorator for dumping returned value of your Flask view-function
+        Today - ONLY FOR FLASK!
+        easy example:
+        @app.get('/users/<int:user_id>')
+        @kef.dump_route
+        def f(user_id):
+            return User.query.get(user_id)
+        WARNING:
+        `dump_route` must be entre the `route` decorator and view function.
+        that has similar sense with this:
+        -> https://flask-caching.readthedocs.io/en/latest/#caching-view-functions
+        """
+        @wraps(method)
+        def dump_response(*args, **kwargs):
+            content = self.dump(method(*args, **kwargs))
+            if Response is not None:
+                response = Response(dumps(content), mimetype='application/json')
+            else:
+                raise PleaseInstallException('If you want to use `dump_route`, please install Flask!')
+            return response
+        return dump_response
+
+class PleaseInstallException(Exception):...
