@@ -10,7 +10,7 @@ setup(
     description='convert DB models or custom-class objects to python dict',
     py_modules=['kefir'],
     platforms='any',
-    zip_safe=False
+    zip_safe=False,
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
