@@ -6,8 +6,8 @@
 kefir is a library for convert objects of classes (or models) to dict
 ## Install
 ```bash
-$ cd your_project_dir
 $ git clone https://github.com/Yourun-proger/kefir.git
+$ cd kefir
 $ pip install -e .
 ```
 **Before installation, it is advisable to create and activate a virtual environment !!!**
