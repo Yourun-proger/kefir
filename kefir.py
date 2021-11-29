@@ -13,12 +13,11 @@ except ImportError:
 
 class Kefir:
 
-    def __init__(self, session=None, objects={}, rels={}, ignore={}, shorcuts={}):
+    def __init__(self, session=None, objects={}, rels={}, ignore={}):
         self.session = session  # SQLAlhcemy session
         self.objects = objects  # tablename -> Class; {'users':User} for example. this is needed for relations
         self.rels = rels  # some relations of tables. Example: rels={'users':['orders']}. users table is main in rels with orders
         self.ignore = ignore
-        self.shorcuts = shorcuts
 
     def _is_custom_class(self, obj):
         return not (
