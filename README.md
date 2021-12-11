@@ -10,33 +10,36 @@ $ git clone https://github.com/Yourun-proger/kefir.git
 $ cd kefir
 $ pip install -e .
 ```
-**Before installation, it is advisable to create and activate a virtual environment !!!**
+**Before installation, it is advisable [to create and activate a virtual environment](https://github.com/Yourun-proger/kefir/wiki/Docs#create-and-activate-virtual-env) !!!**
 ## Example
 ```py
 from pprint import pprint
 from kefir import Kefir
 kef = Kefir()
-class SomeClass:
+class A:
   def __init__(self, some_attr):
-    self.some_attr = some_attr
-class SomeOtherClass:
+    self.a_attr = some_attr
+class B:
   def __init__(self, some_attr, some_other_attr):
-    self.some_attr = some_attr
-    self.some_other_attr = some_other_attr
-some = SomeClass('some kefir')
-some_dict = kef.dump(some) # {'some_attr': 'some kefir'}
-some_other = SomeOtherClass('some other kefir', some)
-some_other_dict = kef.dump(some_other)
-pprint(some_other_dict)
->>> {'some_attr': 'some other kefir', 'some_other_attr': {'some_attr': 'some kefir'}}
+    self.b_attr = some_attr
+    self.b_other_attr = some_other_attr
+a_object = A('kefir')
+b_object = B(42, a_object)
+pprint(kef.dump(b_object))
+>>> {'b_attr': 42, 'b_other_attr': {'a_attr': 'kefir'}}
 ```
 ## Docs
-See [this](https://github.com/Yourun-proger/kefir/wiki/Docs) page
+See [this](https://github.com/Yourun-proger/kefir/wiki/Docs)
 
 ## Requirements
-this support python 3.6+
+It is hard to say. It all depends on the source codebase and legacy code.
+But it definitely works for:
+* *python **3.8.2***
+* *sqlalchemy **1.4.27***
+
+because it is my configurations xD
 ## About
-i created this only for fun
+i created this only for fun and because i tired to write Schemas
 
 *But i true think this project become big and very cool ( 11.08.2021 )*
 ## Contributing
@@ -44,6 +47,6 @@ today this project is very raw and when it has no 1.0 version this isnt't needed
 
 but you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
 ## Conclusion
-get star if you like this, please)
+GIve a ✨ for this project if you ❤ this, please)
 
 *Thanks for reading and have a good day!*
