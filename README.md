@@ -20,13 +20,13 @@ class A:
   def __init__(self, some_attr):
     self.a_attr = some_attr
 class B:
-  def __init__(self, some_attr, some_other_attr):
+  def __init__(self, some_attr, some_a_object):
     self.b_attr = some_attr
-    self.b_other_attr = some_other_attr
+    self.b_a_object = some_a_object
 a_object = A('kefir')
 b_object = B(42, a_object)
 pprint(kef.dump(b_object))
->>> {'b_attr': 42, 'b_other_attr': {'a_attr': 'kefir'}}
+>>> {'b_attr': 42, 'b_a_object': {'a_attr': 'kefir'}}
 ```
 ## Docs
 See [this](https://github.com/Yourun-proger/kefir/wiki/Docs)
