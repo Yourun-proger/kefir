@@ -18,15 +18,15 @@ from kefir import Kefir
 kef = Kefir()
 class A:
   def __init__(self, some_attr):
-    self.a_attr = some_attr
+    self.attr = some_attr
 class B:
   def __init__(self, some_attr, some_a_object):
-    self.b_attr = some_attr
-    self.b_a_object = some_a_object
+    self.attr = some_attr
+    self.a_object = some_a_object
 a_object = A('kefir')
 b_object = B(42, a_object)
 pprint(kef.dump(b_object))
->>> {'b_attr': 42, 'b_a_object': {'a_attr': 'kefir'}}
+>>> {'attr': 42, 'a_object': {'attr': 'kefir'}}
 ```
 ## Docs
 See [this](https://github.com/Yourun-proger/kefir/wiki/Docs)
@@ -39,13 +39,13 @@ But it definitely works for:
 
 because it is my configurations xD
 ## About
-i created this only for fun and because i tired to write Schemas
+I created this only for fun and because i tired to write Schemas
 
 *But i true think this project become big and very cool ( 11.08.2021 )*
 ## Contributing
-today this project is very raw and when it has no 1.0 version this isnt't needed to pr or issues
+Today this project is very raw and when it has no 1.0 version this isnt't needed to pr or issues...
 
-but you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
+But you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
 ## Conclusion
 GIve a ✨ for this project if you ❤ this, please)
 
