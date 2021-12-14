@@ -54,9 +54,9 @@ class Kefir:
         Special decorator for dumping returned value of your Flask view-function
         ONLY FOR FLASK!!!
         easy example:
-        @app.get('/users/<int:user_id>')
+        @app.route('/users/<int:user_id>')
         @kef.dump_route
-        def f(user_id):
+        def user_view(user_id):
             return User.query.get(user_id)
         WARNING:
         `dump_route` must be enter the `route` decorator and view function.
