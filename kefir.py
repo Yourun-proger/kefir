@@ -1,9 +1,10 @@
 """
 Kefir main file
 """
+import re
+import functools
+import json
 
-from functools import wraps
-from json import dumps
 
 try:
     from flask import Response
@@ -11,10 +12,13 @@ except ImportError:
     Response = None
 
 
-class Kefir:
-    def __init__(self):
-        ...  # place for future work
 
+
+class Kefir:
+
+    def __init__(self, represents={}):
+        self.represents = represents
+    
     def dump(self, obj, ignore=None):
         if isinstance(obj, list):
             lst = []
@@ -22,54 +26,68 @@ class Kefir:
                 lst.append(self.dump(item))
             return lst
         dct = {}
+        reprsnt = self.represents.get(type(obj))
+        no_repr = bool(reprsnt is None)
+        if no_repr:
+            ignorecase = []
+        else:
+            ignorecase = reprsnt.ignore
+        
         if obj.__dict__.get('_sa_instance_state'):
             for k, v in obj.__dict__['_sa_instance_state'].__dict__['manager'].__dict__['local_attrs'].items():
-                item = getattr(obj,k)
-                if item is not ignore:
-                    if isinstance(item, (int, str, bool, dict, float)):
-                        dct[k] = item
-                    else:
-                        if isinstance(item, list):
-                            dct[k] = [self.dump(i, obj) for i in item]
+                item = getattr(obj, k)
+                if not k.startswith('_') and k not in ignorecase:
+                    if item is not ignore:
+                        if isinstance(item, (int, str, bool, dict, float)):
+                            dct[k] = item
                         else:
-                            dct[k] = self.dump(item, obj)
+                            if isinstance(item, list):
+                                dct[k] = [self.dump(i, obj) for i in item]
+                            else:
+                                dct[k] = self.dump(item, obj)
+
         else:
-            if hasattr(obj, '__slots__'):
-                for k in obj.__slots__:
-                    if isinstance(getattr(obj,k), (int, str, bool, dict, float)):
-                        dct[k] = getattr(obj, k)
-                    else:
-                        dct[k] = self.dump(getattr(obj, k))
             for k, v in obj.__dict__.items():
-                if not k.startswith('_'):
+                if not k.startswith('_') and k not in ignorecase:
                     if isinstance(v, (int, str, bool, dict, float)):
                         dct[k] = v
                     else:
-                        dct[k] = self.dump(v)
-
+                        if isinstance(item, list):
+                                dct[k] = [self.dump(i, obj) for i in item]
+                        else:
+                                dct[k] = self.dump(item, obj)
+        if not no_repr:
+            for k,v in reprsnt.extra.items():
+                attr = dct[re.search('<(\w+)>', v).group(0)[1:-1]]
+                dct[k] = re.sub('<(\w+)>', f'{attr}', v)
+            for k, v in reprsnt.change.items():
+                dct[k] = eval(str(v))
         return dct
     
-    def dump_route(self, method):
+    def dump_route(self, view_func):
         """
         Special decorator for dumping returned value of your Flask view-function
-        ONLY FOR FLASK!!!
-        easy example:
+        ONLY FOR FLASK!
+        Simple example:
         @app.route('/users/<int:user_id>')
         @kef.dump_route
         def user_view(user_id):
             return User.query.get(user_id)
         WARNING:
-        `dump_route` must be enter the `route` decorator and view function.
-        that has similar sense with this:
-        -> https://flask-caching.readthedocs.io/en/latest/#caching-view-functions
+        `dump_route` must be enter the `route` decorator and view function
         """
-        @wraps(method)
+        @functools.wraps(view_func)
         def dump_response(*args, **kwargs):
-            content = self.dump(method(*args, **kwargs))
+            content = self.dump(view_func(*args, **kwargs))
             if Response is None:
                 raise PleaseInstallException('If you want to use `dump_route`, please install Flask!')
-            response = Response(dumps(content), mimetype='application/json')
+            response = Response(json.dumps(content), mimetype='application/json')
             return response
         return dump_response
 
-class PleaseInstallException(Exception):...
+class Repr:
+    ignore = ()
+    extra = None
+
+class PleaseInstallException(Exception):
+    ...
