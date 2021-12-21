@@ -39,7 +39,10 @@ class Kefir:
                 if not k.startswith('_') and k not in ignorecase:
                     if item is not ignore:
                         if isinstance(item, (int, str, bool, dict, float)):
-                            dct[k] = item
+                            if no_repr:
+                                dct[k] = item
+                            else:
+                                dct[reprsnt.names_map.get(k, k)] = item
                         else:
                             if isinstance(item, list):
                                 dct[k] = [self.dump(i, obj) for i in item]
@@ -60,8 +63,8 @@ class Kefir:
             for k,v in reprsnt.extra.items():
                 attr = dct[re.search('<(\w+)>', v).group(0)[1:-1]]
                 dct[k] = re.sub('<(\w+)>', f'{attr}', v)
-            for k, v in reprsnt.change.items():
-                dct[k] = eval(str(v))
+            for k, v in reprsnt.look.items():
+                dct[k] = reprsnt.__dict__[v](dct[k])
         return dct
     
     def dump_route(self, view_func):
@@ -88,6 +91,8 @@ class Kefir:
 class Repr:
     ignore = ()
     extra = None
+    look = None
+    names_map = None
 
 class PleaseInstallException(Exception):
     ...
