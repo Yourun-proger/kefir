@@ -1,9 +1,11 @@
 """
 Kefir main file
 """
+
 import re
 import functools
 import json
+import inspect
 
 
 try:
@@ -60,13 +62,24 @@ class Kefir:
                         else:
                                 dct[k] = self.dump(item, obj)
         if not no_repr:
-            for k,v in reprsnt.extra.items():
-                attr = dct[re.search('<(\w+)>', v).group(0)[1:-1]]
-                dct[k] = re.sub('<(\w+)>', f'{attr}', v)
-            for k, v in reprsnt.look.items():
-                dct[k] = reprsnt.__dict__[v](dct[k])
+            if reprsnt.extra is not None:
+                for k,v in reprsnt.extra.items():
+                    attr = dct[re.search('<(\w+)>', v).group(0)[1:-1]]
+                    dct[k] = re.sub('<(\w+)>', f'{attr}', v)
+            if reprsnt.look is not None:
+                for name in reprsnt.look:
+                    dct[name] = list(filter(lambda x:x.name.startswith(f'look_{name}'), inspect.classify_class_attrs(reprsnt)))[0].object(dct[name])
+            if reprsnt.validate is not None:
+                for name in reprsnt.validate:
+                    try:
+                        list(filter(lambda x:x.name.startswith(f'validate_{name}'), inspect.classify_class_attrs(reprsnt)))[0].object(dct[name])
+                    except AssertionError as e:
+                        if e.args:
+                            dct[name] = e.args[0]
+                        else:
+                            dct[name] = f'"{name}" is not valid!'
         return dct
-    
+
     def dump_route(self, view_func):
         """
         Special decorator for dumping returned value of your Flask view-function
@@ -93,6 +106,7 @@ class Repr:
     extra = None
     look = None
     names_map = None
+    validate = None
 
 class PleaseInstallException(Exception):
     ...
