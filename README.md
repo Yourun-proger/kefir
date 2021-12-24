@@ -46,7 +46,7 @@ I created this only for fun and because i tired to write Schemas
 Today this project is very raw and when it has no 1.0 version this isnt't needed to pr or issues...
 
 But you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
-## Conclusion
-GIve a ✨ for this project if you ❤ this, please)
+## Support Project
+Give a ✨ for this project if you ❤ this, please)
 
 *Thanks for reading and have a good day!*
