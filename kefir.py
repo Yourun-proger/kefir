@@ -14,13 +14,10 @@ except ImportError:
     Response = None
 
 
-
-
 class Kefir:
-
     def __init__(self, represents={}):
         self.represents = represents
-    
+
     def dump(self, obj, ignore=None):
         if isinstance(obj, list):
             lst = []
@@ -34,11 +31,16 @@ class Kefir:
             ignorecase = []
         else:
             ignorecase = reprsnt.ignore
-        
-        if obj.__dict__.get('_sa_instance_state'):
-            for k, v in obj.__dict__['_sa_instance_state'].__dict__['manager'].__dict__['local_attrs'].items():
+
+        if obj.__dict__.get("_sa_instance_state"):
+            for k, v in (
+                obj.__dict__["_sa_instance_state"]
+                .__dict__["manager"]
+                .__dict__["local_attrs"]
+                .items()
+            ):
                 item = getattr(obj, k)
-                if not k.startswith('_') and k not in ignorecase:
+                if not k.startswith("_") and k not in ignorecase:
                     if item is not ignore:
                         if isinstance(item, (int, str, bool, dict, float)):
                             if no_repr:
@@ -53,26 +55,33 @@ class Kefir:
 
         else:
             for k, v in obj.__dict__.items():
-                if not k.startswith('_') and k not in ignorecase:
+                if not k.startswith("_") and k not in ignorecase:
                     if isinstance(v, (int, str, bool, dict, float)):
                         dct[k] = v
                     else:
-                        if isinstance(item, list):
-                                dct[k] = [self.dump(i, obj) for i in item]
-                        else:
-                                dct[k] = self.dump(item, obj)
+                        dct[k] = self.dump(v, obj)
         if not no_repr:
             if reprsnt.extra is not None:
-                for k,v in reprsnt.extra.items():
-                    attr = dct[re.search('<(\w+)>', v).group(0)[1:-1]]
-                    dct[k] = re.sub('<(\w+)>', f'{attr}', v)
+                for k, v in reprsnt.extra.items():
+                    attr = dct[re.search("<(\w+)>", v).group(0)[1:-1]]
+                    dct[k] = re.sub("<(\w+)>", f"{attr}", v)
             if reprsnt.look is not None:
                 for name in reprsnt.look:
-                    dct[name] = list(filter(lambda x:x.name.startswith(f'look_{name}'), inspect.classify_class_attrs(reprsnt)))[0].object(dct[name])
+                    dct[name] = list(
+                        filter(
+                            lambda x: x.name.startswith(f"look_{name}"),
+                            inspect.classify_class_attrs(reprsnt),
+                        )
+                    )[0].object(dct[name])
             if reprsnt.validate is not None:
                 for name in reprsnt.validate:
                     try:
-                        list(filter(lambda x:x.name.startswith(f'validate_{name}'), inspect.classify_class_attrs(reprsnt)))[0].object(dct[name])
+                        list(
+                            filter(
+                                lambda x: x.name.startswith(f"validate_{name}"),
+                                inspect.classify_class_attrs(reprsnt),
+                            )
+                        )[0].object(dct[name])
                     except AssertionError as e:
                         if e.args:
                             dct[name] = e.args[0]
@@ -92,14 +101,19 @@ class Kefir:
         WARNING:
         `dump_route` must be enter the `route` decorator and view function
         """
+
         @functools.wraps(view_func)
         def dump_response(*args, **kwargs):
             content = self.dump(view_func(*args, **kwargs))
             if Response is None:
-                raise PleaseInstallException('If you want to use `dump_route`, please install Flask!')
-            response = Response(json.dumps(content), mimetype='application/json')
+                raise PleaseInstallException(
+                    "If you want to use `dump_route`, please install Flask!"
+                )
+            response = Response(json.dumps(content), mimetype="application/json")
             return response
+
         return dump_response
+
 
 class Repr:
     ignore = ()
@@ -107,6 +121,7 @@ class Repr:
     look = None
     names_map = None
     validate = None
+
 
 class PleaseInstallException(Exception):
     ...
