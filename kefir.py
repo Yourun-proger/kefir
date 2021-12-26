@@ -22,44 +22,61 @@ class Kefir:
         if isinstance(obj, list):
             lst = []
             for item in obj:
-                lst.append(self.dump(item))
+                lst.append(self.dump(item, ignore))
             return lst
         dct = {}
         reprsnt = self.represents.get(type(obj))
         no_repr = bool(reprsnt is None)
-        if no_repr:
-            ignorecase = []
-        else:
-            ignorecase = reprsnt.ignore
-
-        if obj.__dict__.get("_sa_instance_state"):
-            for k, v in (
-                obj.__dict__["_sa_instance_state"]
-                .__dict__["manager"]
-                .__dict__["local_attrs"]
-                .items()
-            ):
-                item = getattr(obj, k)
-                if not k.startswith("_") and k not in ignorecase:
-                    if item is not ignore:
-                        if isinstance(item, (int, str, bool, dict, float)):
-                            if no_repr:
-                                dct[k] = item
-                            else:
-                                dct[reprsnt.names_map.get(k, k)] = item
-                        else:
-                            if isinstance(item, list):
-                                dct[k] = [self.dump(i, obj) for i in item]
-                            else:
-                                dct[k] = self.dump(item, obj)
-
-        else:
-            for k, v in obj.__dict__.items():
-                if not k.startswith("_") and k not in ignorecase:
-                    if isinstance(v, (int, str, bool, dict, float)):
-                        dct[k] = v
+        ignorecase = []
+        if not no_repr:
+            ignorecase = reprsnt.ignore or ignorecase
+        if hasattr(obj, "__slots__"):
+            for k in obj.__slots__:
+                if isinstance(getattr(obj, k), (int, str, bool, dict, float)):
+                    if no_repr:
+                        dct[k] = getattr(obj, k)
                     else:
-                        dct[k] = self.dump(v, obj)
+                        dct[reprsnt.names_map.get(k, k)] = getattr(obj, k)
+                else:
+                    if no_repr:
+                        dct[k] = self.dump(getattr(obj, k), obj)
+                    else:
+                        dct[reprsnt.names_map.get(k, k)] = self.dump(getattr(obj, k), obj)
+        else:
+            if obj.__dict__.get("_sa_instance_state"):
+                for k, v in (
+                    obj.__dict__["_sa_instance_state"]
+                    .__dict__["manager"]
+                    .__dict__["local_attrs"]
+                    .items()
+                ):
+                    item = getattr(obj, k)
+                    if not k.startswith("_") and k not in ignorecase:
+                        if item is not ignore:
+                            if isinstance(item, (int, str, bool, dict, float)):
+                                if no_repr:
+                                    dct[k] = item
+                                else:
+                                    dct[reprsnt.names_map.get(k, k)] = item
+                            else:
+                                if no_repr:
+                                    dct[k] = self.dump(item, obj)
+                                else:
+                                    dct[reprsnt.names_map.get(k, k)] = self.dump(item, obj)
+
+            else:
+                for k, v in obj.__dict__.items():
+                    if not k.startswith("_") and k not in ignorecase:
+                        if isinstance(v, (int, str, bool, dict, float)):
+                            if no_repr:
+                                dct[k] = v
+                            else:
+                                dct[reprsnt.names_map.get(k, k)] = v
+                        else:
+                            if no_repr:
+                                dct[k] = self.dump(v, obj)
+                            else:
+                                dct[reprsnt.names_map.get(k, k)] = self.dump(v, obj)
         if not no_repr:
             if reprsnt.extra is not None:
                 for k, v in reprsnt.extra.items():
@@ -67,19 +84,20 @@ class Kefir:
                     dct[k] = re.sub("<(\w+)>", f"{attr}", v)
             if reprsnt.look is not None:
                 for name in reprsnt.look:
-                    dct[name] = list(
-                        filter(
-                            lambda x: x.name.startswith(f"look_{name}"),
-                            inspect.classify_class_attrs(reprsnt),
-                        )
-                    )[0].object(dct[name])
+                    if len(list(filter(lambda x: x.name.startswith(f"look_{name}"),inspect.classify_class_attrs(reprsnt)))):
+                        dct[name] = list(
+                            filter(
+                                lambda x: x.name.startswith(f"look_{name}"),
+                                inspect.classify_class_attrs(reprsnt)
+                            )
+                        )[0].object(dct[name])
             if reprsnt.validate is not None:
                 for name in reprsnt.validate:
                     try:
                         list(
                             filter(
                                 lambda x: x.name.startswith(f"validate_{name}"),
-                                inspect.classify_class_attrs(reprsnt),
+                                inspect.classify_class_attrs(reprsnt)
                             )
                         )[0].object(dct[name])
                     except AssertionError as e:
