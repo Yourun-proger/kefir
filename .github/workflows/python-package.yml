@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9"]
+        python-version: ["3.8"]
 
     steps:
     - uses: actions/checkout@v2
@@ -31,13 +31,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup and activate venv
+    - name: Setup and run tests
       run: |
         py -m venv env
         env\Scripts\activate
-    - name: Install SQLAlchemy
-      run:  |
         pip install SQLAlchemy
-    - name: Testing
-      run: |
         py -m unittest
+        env\Scripts\deactivate
