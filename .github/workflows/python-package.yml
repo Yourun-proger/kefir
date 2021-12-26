@@ -39,7 +39,7 @@ jobs:
         pip install -e .
         cd ..
     - name: Install SQLAlchemy
-    - run:  |
+      run:  |
         pip install sqlalchemy==1.4.27
     - name: Testing
       run: |
