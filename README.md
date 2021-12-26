@@ -32,18 +32,13 @@ pprint(kef.dump(b_object))
 See [this](https://github.com/Yourun-proger/kefir/wiki/Docs)
 
 ## Requirements
-It is hard to say. It all depends on the source codebase and legacy code.
-But it definitely works for:
-* *python **3.8.2***
-* *sqlalchemy **1.4.27***
-
-because it is my configurations xD
+Kefir supports python 3.7+
 ## About
 I created this only for fun and because i tired to write Schemas
 
 *But i true think this project become big and very cool ( 11.08.2021 )*
 ## Contributing
-Today this project is very raw and when it has no 1.0 version this isnt't needed to pr or issues...
+Today this project is very raw and this isnt't needed to pr or issues...
 
 But you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
 ## Support Project
