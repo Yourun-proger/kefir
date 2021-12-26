@@ -41,6 +41,8 @@ jobs:
         cd kefir
         pip install -e .
         cd ..
+    - name: Install SQLAlchemy
+    - run: pip install sqlalchemy==1.4.27
     - name: Testing
       run: |
         py -m unittest
