@@ -40,7 +40,7 @@ jobs:
         cd ..
     - name: Install SQLAlchemy
       run:  |
-        pip install sqlalchemy==1.4.27
+        pip install SQLAlchemy==1.4.27
     - name: Testing
       run: |
         py -m unittest
