@@ -31,16 +31,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Kefir
+    - name: Setup and activate venv
       run: |
-        python -m pip install --upgrade pip
-        git clone https://github.com/Yourun-proger/kefir.git
-        cd kefir
-        pip install -e .
-        cd ..
+        py -m venv env
+        env\Scripts\activate
     - name: Install SQLAlchemy
       run:  |
-        pip install SQLAlchemy==1.4.27
+        pip install SQLAlchemy
     - name: Testing
       run: |
         py -m unittest
