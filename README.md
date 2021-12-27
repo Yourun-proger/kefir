@@ -4,7 +4,7 @@
 ![](https://img.shields.io/github/license/yourun-proger/kefir)
 
 # kefir
-kefir is a library for convert SQLAlchemy models or complex objects to dict
+kefir is a framework for convert SQLAlchemy models or complex objects to dict
 ## Install
 ```bash
 $ git clone https://github.com/Yourun-proger/kefir.git
