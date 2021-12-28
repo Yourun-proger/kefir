@@ -16,16 +16,20 @@ $ pip install -e .
 ```py
 from pprint import pprint
 from kefir import Kefir
-kef = Kefir()
+
 class A:
   def __init__(self, some_attr):
     self.attr = some_attr
+
 class B:
   def __init__(self, some_attr, some_a_object):
     self.attr = some_attr
     self.a_object = some_a_object
+
 a_object = A('kefir')
 b_object = B(42, a_object)
+
+kef = Kefir()
 pprint(kef.dump(b_object))
 >>> {'attr': 42, 'a_object': {'attr': 'kefir'}}
 ```
@@ -45,4 +49,4 @@ But you can give me some feedback on [discusssion](https://github.com/Yourun-pro
 ## Support Project
 Give a ✨ for this project if you ❤ this, please)
 
-*Thanks for reading and have a good day!*
+*Have a good day!*
