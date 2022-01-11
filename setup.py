@@ -1,9 +1,10 @@
 from setuptools import setup
+from kefir import __version__
 
 
 setup(
     name='kefir',
-    version='0.1.2',
+    version=__version__,
     url='https://github.com/yourun-proger/kefir/',
     license='MIT',
     author='Yourun-Proger',
