@@ -43,9 +43,11 @@ I created this only for fun and because i tired to write Schemas
 
 *But i true think this project become big and very cool ( 11.08.2021 )*
 ## Contributing
-Today this project is very raw and this isnt't needed to pr or issues...
+Open for issues as minimal feedback needed!
 
-But you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
+Closed for pull requests as still raw
+
+Also you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
 ## Support Project
 Give a ✨ for this project if you ❤ this, please)
 
