@@ -23,10 +23,6 @@ class Kefir:
         self.represents = represents
         self.datetime_format = datetime_format
 
-    def use_config(self, config_obj):
-        for attr in inspect.classify_class_attrs(config_obj):
-            setattr(self, attr.name, attr.object)
-
     def dump(self, obj, ignore=None):
         if isinstance(obj, list):
             lst = []
@@ -151,7 +147,7 @@ class Kefir:
                     new_dct[names_map.get(k, k)] = self.load(v, sub_cls)
                 elif isinstance(v, list):
                     new_dct[names_map.get(k, k)] = [self.load(i, reprsnt.loads[k]) for i in v]
-                elif reprsnt.loads[names_map.get(k, k)] is datetime.datetime:
+                elif reprsnt.loads.get(names_map.get(k, k)) is datetime.datetime:
                     new_dct[names_map.get(k, k)] = datetime.datetime.strptime(v, reprsnt.datetime_format)
                 else:
                     new_dct[names_map.get(k, k)] = v
@@ -206,7 +202,6 @@ class Repr:
     validate = ()
     loads = None
     datetime_format = '%d.%m.%Y'
-
 
 class PleaseInstallException(Exception):
     ...
