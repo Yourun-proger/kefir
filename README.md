@@ -4,7 +4,7 @@
 ![](https://img.shields.io/github/license/yourun-proger/kefir)
 
 # kefir
-kefir is a framework for convert SQLAlchemy models or complex objects to dict
+kefir is a framework for convert SQLAlchemy models or complex objects to dict and back
 ## Install
 ```bash
 $ git clone https://github.com/Yourun-proger/kefir.git
@@ -14,8 +14,7 @@ $ pip install -e .
 **Before installation, it is advisable [to create and activate a virtual environment](https://github.com/Yourun-proger/kefir/wiki/Docs#create-and-activate-virtual-env) !!!**
 ## Example
 ```py
-from pprint import pprint
-from kefir import Kefir
+from kefir import Kefir, Repr
 
 class A:
   def __init__(self, some_attr):
@@ -26,11 +25,19 @@ class B:
     self.attr = some_attr
     self.a_object = some_a_object
 
+class BRepr(Repr):
+    loads = {'a_object': A}
+
 a_object = A('kefir')
 b_object = B(42, a_object)
 
+raw_data = {'attr': 123, 'a_object': {'attr': 456}}
+
 kef = Kefir()
-pprint(kef.dump(b_object))
+new_b_object = kef.load(raw_data, B) # same as B(123, A(456))
+print(new_b_object)
+>>> <__main__.B object at some_hash>
+print(kef.dump(b_object))
 >>> {'attr': 42, 'a_object': {'attr': 'kefir'}}
 ```
 ## Docs
@@ -45,7 +52,7 @@ I created this only for fun and because i tired to write Schemas
 ## Contributing
 Open for issues as minimal feedback needed!
 
-Closed for pull requests as still raw
+Closed for pull requests as still raw...
 
 Also you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
 ## Support Project
