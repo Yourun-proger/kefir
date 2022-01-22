@@ -17,12 +17,20 @@ class TestKefirBase(unittest.TestCase):
           def __init__(self, some_attr, some_a_object):
             self.attr = some_attr
             self.a_object = some_a_object
-        
+
+        class BRepr(Repr):
+            loads = {'a_object': A}
+
+        self.kef.represents = {B:BRepr}  # bad monkey patching
         a_object = A('kefir')
         b_object = B(42, a_object)
+        raw_data = {'attr' :'some text', 'a_object': {'attr': 'just attr'}}
+        new_obj = self.kef.load(raw_data, B)
         
         self.assertEqual(self.kef.dump(a_object), {'attr': 'kefir'})
         self.assertEqual(self.kef.dump(b_object), {'attr': 42, 'a_object': {'attr': 'kefir'}})
+        self.assertEqual(type(new_obj), B)
+        self.assertEqual(type(new_obj.a_object), A)
     
     def test_dataclass(self):
         
