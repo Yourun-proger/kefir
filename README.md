@@ -34,10 +34,11 @@ b_object = B(42, a_object)
 raw_data = {'attr': 123, 'a_object': {'attr': 456}}
 
 kef = Kefir(represents={B:BRepr})
-new_b_object = kef.load(raw_data, B) # same as B(123, A(456))
+new_b_object = kef.load(raw_data, B)  # same as B(123, A(456))
+raw_b_object = kef.dump(b_object)
 print(new_b_object)
+print(raw_b_object)
 >>> <__main__.B object at some_hash>
-print(kef.dump(b_object))
 >>> {'attr': 42, 'a_object': {'attr': 'kefir'}}
 ```
 ## Docs
