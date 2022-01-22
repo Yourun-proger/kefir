@@ -9,19 +9,25 @@ import json
 import re
 
 try:
-    from flask import Response
+    from flask import Response as FlaskResponse
 except ImportError:
-    Response = None
+    FlaskResponse = None
+
+try:
+    from fastapi.responses import JSONResponse as FastAPIResponse
+except ImportError:
+    FastAPIResponse = None
 
 __version__ = '0.1.2'
 
 
 class Kefir:
-    def __init__(self, represents=None, datetime_format='%d.%m.%Y'):
+    def __init__(self, represents=None, datetime_format='%d.%m.%Y', used="flask"):
         if represents is None:
             represents = {}
         self.represents = represents
         self.datetime_format = datetime_format
+        self.used = used
 
     def dump(self, obj, ignore=None):
         if isinstance(obj, list):
@@ -170,8 +176,7 @@ class Kefir:
 
     def dump_route(self, view_func):
         """
-        Special decorator for dumping returned value of your Flask view-function
-        ONLY FOR FLASK!
+        Special decorator for dumping returned value of your Flask or FastAPI view-function
         Simple example:
         @app.route('/users/<int:user_id>')
         @kef.dump_route
@@ -184,12 +189,22 @@ class Kefir:
         @functools.wraps(view_func)
         def dump_response(*args, **kwargs):
             content = self.dump(view_func(*args, **kwargs))
-            if Response is None:
-                raise PleaseInstallException(
-                    "If you want to use `dump_route`, please install Flask!"
-                )
-            response = Response(json.dumps(content), mimetype="application/json")
-            return response
+            if self.used.lower() == 'flask':
+                if FlaskResponse is None:
+                    raise PleaseInstallException(
+                        "If you want to use `dump_route`, please install Flask!"
+                    )
+                response = FlaskResponse(json.dumps(content), mimetype="application/json")
+                return response
+            elif self.used.lower() == 'fastapi':
+                if FastAPIResponse is None:
+                    raise PleaseInstallException(
+                        "If you want to use `dump_route`, please install FastAPI!"
+                    )
+                response = FastAPIResponse(content)
+                return response
+            else:
+                raise ValueError('`used` arg can be only "flask" or "fastapi" string')
 
         return dump_response
 
@@ -206,11 +221,8 @@ class Repr:
 class PleaseInstallException(Exception):
     ...
 
-
 class NeedReprException(Exception):
     ...
 
-
 class DeserializationException(Exception):
     ...
-
