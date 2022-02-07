@@ -133,6 +133,11 @@ class Kefir:
         return dct
 
     def load(self, dct, cls):
+        if isinstance(dct, list):
+            lst = []
+            for item in dct:
+                lst.append(self.load(item, cls))
+            return lst
         reprsnt = self.represents.get(cls)
         if reprsnt is None:
             for k, v in dct.items():
