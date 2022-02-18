@@ -5,11 +5,11 @@ from kefir import __version__
 setup(
     name='kefir',
     version=__version__,
-    url='https://github.com/yourun-proger/kefir/',
+    url='https://github.com/Yourun-proger/kefir/',
     license='MIT',
-    author='Yourun-Proger',
-    description='convert SQLAlchemy models or custom-class objects to python dict',
-    py_modules=['kefir'],
+    author='Yourun-proger',
+    description='Easy (de)serialization of SQLAlchemy models and complex objects',
+    packages=['kefir'],
     platforms='any',
     zip_safe=False,
     classifiers=[
