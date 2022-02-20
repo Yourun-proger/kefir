@@ -3,10 +3,10 @@ from kefir.kefs import SyncKefir, AsyncKefir
 class KefirFactory:
 
     @staticmethod
-    def makeKef(represents=None, datetime_format='%d.%m.%Y', used='flask', mod='sync'):
-        if mod.lower() == 'sync':
+    def makeKef(represents=None, datetime_format='%d.%m.%Y', used='flask', mode='sync'):
+        if mode.lower() == 'sync':
             return SyncKefir(represents, datetime_format, used)
-        elif mod.lower() == 'async':
+        elif mode.lower() == 'async':
             raise NotImplementedError(
                                       """Today Kefir can't be asynchronous!
                                       See this for more info:

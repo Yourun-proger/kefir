@@ -2,6 +2,12 @@ import datetime
 import inspect
 import re
 
+from kefir.exceptions import (
+                                            PleaseInstallException,
+                                            NeedReprException,
+                                            DeserializationException
+                                            )
+
 class BaseKefir:
     def __init__(self, represents=None, datetime_format='%d.%m.%Y', used="flask"):
         if represents is None:
