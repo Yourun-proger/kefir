@@ -3,13 +3,14 @@ import inspect
 import re
 
 from kefir.exceptions import (
-                                            PleaseInstallException,
-                                            NeedReprException,
-                                            DeserializationException
-                                            )
+    PleaseInstallException,
+    NeedReprException,
+    DeserializationException,
+)
+
 
 class BaseKefir:
-    def __init__(self, represents=None, datetime_format='%d.%m.%Y', used="flask"):
+    def __init__(self, represents=None, datetime_format="%d.%m.%Y", used="flask"):
         if represents is None:
             represents = {}
         self.represents = represents
@@ -44,11 +45,16 @@ class BaseKefir:
                     if no_repr or reprsnt.names_map is None:
                         dct[k] = self.dump(getattr(obj, k), obj)
                     else:
-                        dct[reprsnt.names_map.get(k, k)] = self.dump(getattr(obj, k), obj)
+                        dct[reprsnt.names_map.get(k, k)] = self.dump(
+                            getattr(obj, k), obj
+                        )
         else:
             if obj.__dict__.get("_sa_instance_state"):
                 for k, v in (
-                        obj.__dict__["_sa_instance_state"].__dict__["manager"].__dict__["local_attrs"].items()
+                    obj.__dict__["_sa_instance_state"]
+                    .__dict__["manager"]
+                    .__dict__["local_attrs"]
+                    .items()
                 ):
                     item = getattr(obj, k)
                     if not k.startswith("_") and k not in ignorecase:
@@ -62,7 +68,9 @@ class BaseKefir:
                                 if no_repr:
                                     dct[k] = self.dump(item, obj)
                                 else:
-                                    dct[reprsnt.names_map.get(k, k)] = self.dump(item, obj)
+                                    dct[reprsnt.names_map.get(k, k)] = self.dump(
+                                        item, obj
+                                    )
 
             else:
                 for k, v in obj.__dict__.items():
@@ -95,12 +103,18 @@ class BaseKefir:
                     dct[k] = re.sub("<(\w+)>", f"{attr}", v)
             if reprsnt.look is not None:
                 for name in reprsnt.look:
-                    if len(list(filter(lambda x: x.name.startswith(f"look_{name}"),
-                                       inspect.classify_class_attrs(reprsnt)))):
+                    if len(
+                        list(
+                            filter(
+                                lambda x: x.name.startswith(f"look_{name}"),
+                                inspect.classify_class_attrs(reprsnt),
+                            )
+                        )
+                    ):
                         dct[name] = list(
                             filter(
                                 lambda x: x.name.startswith(f"look_{name}"),
-                                inspect.classify_class_attrs(reprsnt)
+                                inspect.classify_class_attrs(reprsnt),
                             )
                         )[0].object(dct[name])
             if reprsnt.validate is not None:
@@ -109,7 +123,7 @@ class BaseKefir:
                         list(
                             filter(
                                 lambda x: x.name.startswith(f"validate_{name}"),
-                                inspect.classify_class_attrs(reprsnt)
+                                inspect.classify_class_attrs(reprsnt),
                             )
                         )[0].object(dct[name])
                     except AssertionError as e:
@@ -131,8 +145,9 @@ class BaseKefir:
                 if isinstance(v, dict):
                     raise NeedReprException(
                         f"\nThis object with the nested data.\nAdd Repr for {cls} class!\n"
-                        f"In Repr, `{k}` field must be added to `loads` dict")
-            if hasattr(cls, '__tablename__'):
+                        f"In Repr, `{k}` field must be added to `loads` dict"
+                    )
+            if hasattr(cls, "__tablename__"):
                 return cls(**dct)
             return cls(*dct.values())
         else:
@@ -144,9 +159,13 @@ class BaseKefir:
                     sub_cls = reprsnt.loads[names_map.get(k, k)]
                     new_dct[names_map.get(k, k)] = self.load(v, sub_cls)
                 elif isinstance(v, list):
-                    new_dct[names_map.get(k, k)] = [self.load(i, reprsnt.loads[k]) for i in v]
+                    new_dct[names_map.get(k, k)] = [
+                        self.load(i, reprsnt.loads[k]) for i in v
+                    ]
                 elif reprsnt.loads.get(names_map.get(k, k)) is datetime.datetime:
-                    new_dct[names_map.get(k, k)] = datetime.datetime.strptime(v, reprsnt.datetime_format)
+                    new_dct[names_map.get(k, k)] = datetime.datetime.strptime(
+                        v, reprsnt.datetime_format
+                    )
                 else:
                     new_dct[names_map.get(k, k)] = v
             if reprsnt.validate is not None:
@@ -155,13 +174,17 @@ class BaseKefir:
                         list(
                             filter(
                                 lambda x: x.name.startswith(f"validate_{name}"),
-                                inspect.classify_class_attrs(reprsnt)
+                                inspect.classify_class_attrs(reprsnt),
                             )
                         )[0].object(new_dct[name])
                     except AssertionError as e:
                         if e.args:
-                            raise DeserializationException(f"\nCan't deserialize `{name}` field\n{e.args[0]}") from None
-                        raise DeserializationException(f"\nCan't deserialize `{name}` field!") from None
-            if hasattr(cls, '__tablename__'):
+                            raise DeserializationException(
+                                f"\nCan't deserialize `{name}` field\n{e.args[0]}"
+                            ) from None
+                        raise DeserializationException(
+                            f"\nCan't deserialize `{name}` field!"
+                        ) from None
+            if hasattr(cls, "__tablename__"):
                 return cls(**new_dct)
             return cls(*new_dct.values())

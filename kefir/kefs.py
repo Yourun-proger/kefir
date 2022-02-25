@@ -13,10 +13,11 @@ try:
 except ImportError:
     FastAPIResponse = None
 
+
 class SyncKefir(BaseKefir):
     def __init__(self, represents, datetime_format, used):
         super().__init__(represents, datetime_format, used)
-    
+
     def dump_route(self, view_func):
         """
         Special decorator for dumping returned value of your Flask or FastAPI view-function
@@ -32,14 +33,16 @@ class SyncKefir(BaseKefir):
         @functools.wraps(view_func)
         def dump_response(*args, **kwargs):
             content = self.dump(view_func(*args, **kwargs))
-            if self.used.lower() == 'flask':
+            if self.used.lower() == "flask":
                 if FlaskResponse is None:
                     raise PleaseInstallException(
                         "If you want to use `dump_route`, please install Flask!"
                     )
-                response = FlaskResponse(json.dumps(content), mimetype="application/json")
+                response = FlaskResponse(
+                    json.dumps(content), mimetype="application/json"
+                )
                 return response
-            elif self.used.lower() == 'fastapi':
+            elif self.used.lower() == "fastapi":
                 if FastAPIResponse is None:
                     raise PleaseInstallException(
                         "If you want to use `dump_route`, please install FastAPI!"
@@ -51,10 +54,11 @@ class SyncKefir(BaseKefir):
 
         return dump_response
 
+
 class AsyncKefir(BaseKefir):
     def __init__(self, represents, datetime_format, used):
         super().__init__(represents, datetime_format, used)
-        
+
     def dump_route(self, view_func):
         # place for decorator that supports async view-functions
         ...

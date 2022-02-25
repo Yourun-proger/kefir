@@ -5,4 +5,4 @@ class Repr:
     names_map = None
     validate = ()
     loads = None
-    datetime_format = '%d.%m.%Y'
+    datetime_format = "%d.%m.%Y"
