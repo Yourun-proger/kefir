@@ -90,7 +90,6 @@ class TestKefirRepr(unittest.TestCase):
         class BRepr(Repr):
             ignore = ["unused"]
             names_map = {"a_object": "a_obj"}
-            extra = {"url": "path/to/b_object/<id>"}
             look = ["a_obj"]
             validate = ["attr"]
 
@@ -111,8 +110,7 @@ class TestKefirRepr(unittest.TestCase):
             {
                 "id": 42,
                 "attr": "kef not in attr! WHY?",
-                "a_obj": {"first": "kefir", "second": "project"},
-                "url": "path/to/b_object/42",
+                "a_obj": {"first": "kefir", "second": "project"}
             },
         )
 
@@ -148,7 +146,6 @@ class TestKefirSQLAlchemy(unittest.TestCase):
         class UserRepr(Repr):
             ignore = ["password_hash"]
             names_map = {"mail": "email"}
-            extra = {"url": "api/users/<id>"}
             look = ["email"]
             validate = ["email"]
 
@@ -193,8 +190,7 @@ class TestKefirSQLAlchemy(unittest.TestCase):
                         }
                     ],
                     "id": 1,
-                    "email": "liame.bolb@bob",
-                    "url": "api/users/1",
+                    "email": "liame.bolb@bob"
                 },
                 "id": 1,
                 "address": "la rue",
@@ -217,6 +213,5 @@ class TestKefirSQLAlchemy(unittest.TestCase):
                 ],
                 "id": 1,
                 "email": "liame.bolb@bob",
-                "url": "api/users/1",
             },
         )

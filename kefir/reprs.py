@@ -1,8 +1,8 @@
 class Repr:
     ignore = ()
-    extra = None
+    # extra = {}
     look = ()
-    names_map = None
+    names_map = {}
     validate = ()
-    loads = None
+    loads = {}
     datetime_format = "%d.%m.%Y"

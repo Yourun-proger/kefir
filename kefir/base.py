@@ -6,6 +6,7 @@ from kefir.exceptions import (
     PleaseInstallException,
     NeedReprException,
     DeserializationException,
+    NeedFunctionException
 )
 
 
@@ -17,121 +18,96 @@ class BaseKefir:
         self.datetime_format = datetime_format
         self.used = used
 
-    def dump(self, obj, ignore=None):
-        if isinstance(obj, list):
-            lst = []
-            for item in obj:
-                lst.append(self.dump(item, ignore))
-            return lst
+    def _add_look(self, dct, reprsnt): 
+        for name in reprsnt.look:
+            try:
+                dct[name] = list(
+                    filter(
+                        lambda x: x.name.startswith(f"look_{name}"),
+                        inspect.classify_class_attrs(reprsnt),
+                    )
+                )[0].object(dct[name])
+            except IndexError:
+                raise NeedFunctionException('No look function for "{name}" field declared in "Repr.look!')
+        return dct
+
+    def _validate(self, dct, reprsnt, moment):
+        for name in reprsnt.validate:
+            try:
+                list(filter(
+                        lambda x: x.name.startswith(f"validate_{name}"),
+                        inspect.classify_class_attrs(reprsnt))
+                )[0].object(dct[name])
+            except AssertionError as e:
+                if moment == 'dump':
+                    if e.args:
+                        dct[name] = e.args[0]
+                    else:
+                        dct[name] = f'`{name}` is not valid!'
+                else:
+                    if e.args:
+                        raise DeserializationException(
+                            f"\nCan't deserialize `{name}` field\n{e.args[0]}"
+                        ) from None
+                    raise DeserializationException(
+                        f"\nCan't deserialize `{name}` field!"
+                    ) from None
+            except IndexError:
+                raise NeedFunctionException('No validate function for `{name}` field declared in `Repr.validate!`')
+        return dct
+    
+    def _dump_obj(self, obj, ignore=None):
         dct = {}
         reprsnt = self.represents.get(type(obj))
-        no_repr = bool(reprsnt is None)
-        ignorecase = []
-        if not no_repr:
-            ignorecase = reprsnt.ignore or ignorecase
         if hasattr(obj, "__slots__"):
-            for k in obj.__slots__:
-                if isinstance(getattr(obj, k), (int, str, bool, dict, float)):
-                    if no_repr or reprsnt.names_map is None:
-                        dct[k] = getattr(obj, k)
-                    else:
-                        dct[reprsnt.names_map.get(k, k)] = getattr(obj, k)
-                elif isinstance(getattr(obj, k), datetime.datetime):
-                    if no_repr:
-                        dct[k] = getattr(obj, k).strftime(self.datetime_format)
-                    else:
-                        dct[k] = getattr(obj, k).strftime(reprsnt.datetime_format)
-                else:
-                    if no_repr or reprsnt.names_map is None:
-                        dct[k] = self.dump(getattr(obj, k), obj)
-                    else:
-                        dct[reprsnt.names_map.get(k, k)] = self.dump(
-                            getattr(obj, k), obj
-                        )
+            # make dict for objects with `__slots__`
+            obj_dct = {k: getattr(obj, k) for k in obj.__slots__}
         else:
+            # otherwise check if object is SQLAlchemy model
             if obj.__dict__.get("_sa_instance_state"):
-                for k, v in (
-                    obj.__dict__["_sa_instance_state"]
-                    .__dict__["manager"]
-                    .__dict__["local_attrs"]
-                    .items()
-                ):
-                    item = getattr(obj, k)
-                    if not k.startswith("_") and k not in ignorecase:
-                        if item is not ignore:
-                            if isinstance(item, (int, str, bool, dict, float)):
-                                if no_repr:
-                                    dct[k] = item
-                                else:
-                                    dct[reprsnt.names_map.get(k, k)] = item
-                            else:
-                                if no_repr:
-                                    dct[k] = self.dump(item, obj)
-                                else:
-                                    dct[reprsnt.names_map.get(k, k)] = self.dump(
-                                        item, obj
-                                    )
-
+                obj_dct = obj.__dict__["_sa_instance_state"] \
+                          .__dict__["manager"].__dict__["local_attrs"]
             else:
-                for k, v in obj.__dict__.items():
-                    if not k.startswith("_") and k not in ignorecase:
-                        if isinstance(v, (int, str, bool, dict, float)):
-                            if no_repr:
-                                dct[k] = v
-                            else:
-                                if reprsnt.names_map is not None:
-                                    dct[reprsnt.names_map.get(k, k)] = v
-                                else:
-                                    dct[k] = v
-                        elif isinstance(v, datetime.datetime):
-                            if no_repr:
-                                dct[k] = v.strftime(self.datetime_format)
-                            else:
-                                dct[k] = v.strftime(reprsnt.datetime_format)
+                obj_dct =obj.__dict__
+        if reprsnt is not None:
+            for k, v in obj_dct.items():
+                item = getattr(obj, k)
+                if not k.startswith("_") and k not in reprsnt.ignore:
+                    if item is not ignore:
+                        if isinstance(item, (int, str, bool, dict, float)):
+                            dct[reprsnt.names_map.get(k, k)] = item
+                        elif isinstance(item , datetime.datetime):
+                            dct[reprsnt.names_map.get(k, k)] = item.strftime(reprsnt.datetime_format)
                         else:
-                            if no_repr:
-                                dct[k] = self.dump(v, obj)
-                            else:
-                                if reprsnt.names_map is not None:
-                                    dct[reprsnt.names_map.get(k, k)] = self.dump(v, obj)
-                                else:
-                                    dct[k] = self.dump(v, obj)
-        if not no_repr:
-            if reprsnt.extra is not None:
-                for k, v in reprsnt.extra.items():
-                    attr = dct[re.search("<(\w+)>", v).group(0)[1:-1]]
-                    dct[k] = re.sub("<(\w+)>", f"{attr}", v)
-            if reprsnt.look is not None:
-                for name in reprsnt.look:
-                    if len(
-                        list(
-                            filter(
-                                lambda x: x.name.startswith(f"look_{name}"),
-                                inspect.classify_class_attrs(reprsnt),
-                            )
-                        )
-                    ):
-                        dct[name] = list(
-                            filter(
-                                lambda x: x.name.startswith(f"look_{name}"),
-                                inspect.classify_class_attrs(reprsnt),
-                            )
-                        )[0].object(dct[name])
-            if reprsnt.validate is not None:
-                for name in reprsnt.validate:
-                    try:
-                        list(
-                            filter(
-                                lambda x: x.name.startswith(f"validate_{name}"),
-                                inspect.classify_class_attrs(reprsnt),
-                            )
-                        )[0].object(dct[name])
-                    except AssertionError as e:
-                        if e.args:
-                            dct[name] = e.args[0]
+                            dct[reprsnt.names_map.get(k, k)] = self.dump(item, obj)
+            # i deleted `extra` field because this is not what i want to see
+            # see here ->
+            # https://github.com/Yourun-proger/kefir/wiki/Docs#what-worries-me
+            # point 5
+            dct = self._add_look(dct, reprsnt)
+            dct = self._validate(dct, reprsnt, 'dump')
+        else:
+            for k, v in obj_dct.items():
+                item = getattr(obj, k)
+                if not k.startswith("_") and item is not ignore:
+                        if isinstance(item, (int, str, bool, dict, float)):
+                            dct[k] = item
+                        elif isinstance(item, datetime.datetime):
+                            dct[k] = item.strftime(self.datetime_format)
                         else:
-                            dct[name] = f'"{name}" is not valid!'
+                            dct[k] = self.dump(item, obj)
         return dct
+    
+    def _dump_list(self, list_of_objs, ignore):
+        lst = []
+        for obj in list_of_objs:
+            lst.append(self.dump(obj, ignore))
+        return lst
+    
+    def dump(self, obj, ignore=None):
+        if isinstance(obj, list):
+            return self._dump_list(obj, ignore)
+        return self._dump_obj(obj, ignore)
 
     def load(self, dct, cls):
         if isinstance(dct, list):
@@ -152,8 +128,7 @@ class BaseKefir:
             return cls(*dct.values())
         else:
             new_dct = {}
-            names_map = reprsnt.names_map or {}
-            names_map = {v: k for k, v in names_map.items()}
+            names_map = {v: k for k, v in reprsnt.names_map.items()}
             for k, v in dct.items():
                 if isinstance(v, dict):
                     sub_cls = reprsnt.loads[names_map.get(k, k)]
@@ -168,23 +143,7 @@ class BaseKefir:
                     )
                 else:
                     new_dct[names_map.get(k, k)] = v
-            if reprsnt.validate is not None:
-                for name in reprsnt.validate:
-                    try:
-                        list(
-                            filter(
-                                lambda x: x.name.startswith(f"validate_{name}"),
-                                inspect.classify_class_attrs(reprsnt),
-                            )
-                        )[0].object(new_dct[name])
-                    except AssertionError as e:
-                        if e.args:
-                            raise DeserializationException(
-                                f"\nCan't deserialize `{name}` field\n{e.args[0]}"
-                            ) from None
-                        raise DeserializationException(
-                            f"\nCan't deserialize `{name}` field!"
-                        ) from None
+            new_dct = self._validate(new_dct, reprsnt, 'validate')
             if hasattr(cls, "__tablename__"):
                 return cls(**new_dct)
             return cls(*new_dct.values())
