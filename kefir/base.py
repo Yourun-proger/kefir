@@ -143,7 +143,7 @@ class BaseKefir:
                     )
                 else:
                     new_dct[names_map.get(k, k)] = v
-            new_dct = self._validate(new_dct, reprsnt, 'validate')
+            new_dct = self._validate(new_dct, reprsnt, 'load')
             if hasattr(cls, "__tablename__"):
                 return cls(**new_dct)
             return cls(*new_dct.values())

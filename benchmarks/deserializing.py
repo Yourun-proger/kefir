@@ -23,24 +23,20 @@ class NoteRepr(Repr):
 note_schema = NoteSchema(many=True)
 
 notes = [
-    Note(id=i, title=f"title #{i}", desc=f"very long desc {i} {i*10} {i+1}")
+    dict(id=i, title=f"title #{i}", description=f"very long desc {i} {i*10} {i+1}")
     for i in range(10)
 ]
 
-kef = Kefir()
+kef = Kefir({Note:NoteRepr})
 
 
 def do_kef():
-    return kef.dump(notes)
+    return kef.load(notes, Note)
 
 
 def do_marshmallow():
-    return note_schema.dump(notes)
+    return note_schema.load(notes)
 
 
-print(
-    "kefir:         ", timeit("do()", globals={"do": do_kef}, number=100000)
-)  # 2.2212179
-print(
-    "marshmallow:   ", timeit("do()", globals={"do": do_marshmallow}, number=100000)
-)  # 7.5289084
+print("kefir:         ", timeit("do()", globals={"do": do_kef}, number=100000))  # 4.003760300000001
+print("marshmallow:   ", timeit("do()", globals={"do": do_marshmallow}, number=100000))  # 21.8188786
