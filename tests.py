@@ -140,9 +140,6 @@ class TestKefirSQLAlchemy(unittest.TestCase):
             password_hash = Column(String)
             orders = relationship("Order", back_populates="user")
 
-            def __repr__(self):
-                return f"Hello!\nMy mail is {self.mail}"
-
         class UserRepr(Repr):
             ignore = ["password_hash"]
             names_map = {"mail": "email"}
@@ -163,9 +160,6 @@ class TestKefirSQLAlchemy(unittest.TestCase):
             date = Column(String)
             user_mail = Column(String, ForeignKey("users.mail"))
             user = relationship("User", back_populates="orders")
-
-            def __repr__(self):
-                return f"Order\n#{self.id}\nPrice:{self.price}"
 
         Base.metadata.create_all(engine)
         user = User(mail="bob@blob.email", password_hash="123")

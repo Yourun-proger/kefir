@@ -1,6 +1,7 @@
 [![CI](https://github.com/Yourun-proger/kefir/actions/workflows/python-package.yml/badge.svg)](https://github.com/Yourun-proger/kefir/actions/workflows/python-package.yml)
 ![](https://img.shields.io/github/v/release/yourun-proger/kefir)
 ![](https://img.shields.io/github/languages/code-size/yourun-proger/kefir)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![](https://img.shields.io/github/license/yourun-proger/kefir)
 
 # kefir

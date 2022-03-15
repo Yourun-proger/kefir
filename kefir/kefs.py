@@ -2,6 +2,7 @@ import functools
 import json
 
 from kefir.base import BaseKefir
+from kefir.exceptions import PleaseInstallException
 
 try:
     from flask import Response as FlaskResponse

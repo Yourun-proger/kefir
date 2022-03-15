@@ -3,3 +3,5 @@ env/
 venv/
 /kefir.egg-info/
 __pycache__/
+htmlcov/
+.coverage
