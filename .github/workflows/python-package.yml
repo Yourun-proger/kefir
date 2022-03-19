@@ -31,10 +31,17 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup and run tests
+    - name: Install requirements
       run: |
-        py -m venv env
-        env\Scripts\activate
-        pip install SQLAlchemy==1.4.27
-        py -m unittest
-        env\Scripts\deactivate
+        pip install -U pip setuptools
+        pip install -r dev-requirements.txt
+    - name: Lints
+      run: |
+        flake8 kefir/ tests.py --ignore E501
+    - name: Tests
+      run: |
+	py -m unittest
+    - name: Coverage
+      run: |
+	coverage run -m unittest
+        covergae report -m

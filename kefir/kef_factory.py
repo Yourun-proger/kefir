@@ -1,4 +1,4 @@
-from kefir.kefs import SyncKefir, AsyncKefir
+from kefir.kefs import SyncKefir
 
 
 class KefirFactory:

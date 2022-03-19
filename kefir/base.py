@@ -1,5 +1,6 @@
 import datetime
 import inspect
+import json
 
 from kefir.exceptions import (
     NeedReprException,
@@ -27,7 +28,7 @@ class BaseKefir:
                 )[0].object(dct[name])
             except IndexError:
                 raise NeedFunctionException(
-                    'No look function for `{name}` field declared in `Repr.look`!'
+                    "No look function for `{name}` field declared in `Repr.look`!"
                 )
         return dct
 
@@ -41,11 +42,11 @@ class BaseKefir:
                     )
                 )[0].object(dct[name])
             except AssertionError as e:
-                if moment == 'dump':
+                if moment == "dump":
                     if e.args:
                         dct[name] = e.args[0]
                     else:
-                        dct[name] = f'`{name}` is not valid!'
+                        dct[name] = f"`{name}` is not valid!"
                 else:
                     if e.args:
                         raise DeserializationException(
@@ -56,7 +57,7 @@ class BaseKefir:
                     ) from None
             except IndexError:
                 raise NeedFunctionException(
-                    'No validate function for `{name}` field declared in `Repr.validate!`'
+                    "No validate function for `{name}` field declared in `Repr.validate!`"
                 )
         return dct
 
@@ -94,7 +95,7 @@ class BaseKefir:
             # https://github.com/Yourun-proger/kefir/wiki/Docs#what-worries-me
             # point 5
             dct = self._add_look(dct, reprsnt)
-            dct = self._validate(dct, reprsnt, 'dump')
+            dct = self._validate(dct, reprsnt, "dump")
         else:
             for k, v in obj_dct.items():
                 item = getattr(obj, k)
@@ -124,6 +125,15 @@ class BaseKefir:
             for item in dct:
                 lst.append(self.load(item, cls))
             return lst
+        if isinstance(dct, str):
+            if dct.endswith(".json"):
+                with open(dct, "r") as json_file:
+                    dct = json.loads(json_file.read())
+            else:
+                raise ValueError(
+                    """If you want to feed me a json file,
+                                         please change/add the .json extension."""
+                )
         reprsnt = self.represents.get(cls)
         if reprsnt is None:
             for k, v in dct.items():
@@ -147,10 +157,12 @@ class BaseKefir:
                         self.load(i, reprsnt.loads[k]) for i in v
                     ]
                 elif reprsnt.loads.get(names_map.get(k, k)) is datetime.datetime:
-                    new_dct[names_map.get(k, k)] = datetime.datetime.strptime(v, reprsnt.datetime_format)
+                    new_dct[names_map.get(k, k)] = datetime.datetime.strptime(
+                        v, reprsnt.datetime_format
+                    )
                 else:
                     new_dct[names_map.get(k, k)] = v
-            new_dct = self._validate(new_dct, reprsnt, 'load')
+            new_dct = self._validate(new_dct, reprsnt, "load")
             if hasattr(cls, "__tablename__"):
                 return cls(**new_dct)
             return cls(*new_dct.values())

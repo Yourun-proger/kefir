@@ -122,9 +122,7 @@ class TestKefirSQLAlchemy(unittest.TestCase):
             Column,
             Integer,
             String,
-            ForeignKey,
-            text,
-            select,
+            ForeignKey
         )
         from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
