@@ -40,7 +40,7 @@ jobs:
         flake8 kefir/ tests.py --ignore E501
     - name: Tests
       run: |
-       py -m unittest
+       python -m unittest
     - name: Coverage
       run: |
        coverage run -m unittest
