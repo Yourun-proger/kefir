@@ -33,7 +33,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install requirements
       run: |
-        py -m pip install -U pip setuptools
+        python -m pip install -U pip setuptools
         pip install -r dev-requirements.txt
     - name: Lints
       run: |
