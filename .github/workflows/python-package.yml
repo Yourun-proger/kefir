@@ -44,4 +44,4 @@ jobs:
     - name: Coverage
       run: |
        coverage run -m unittest
-       covergae report -m
+       coverage report -m
