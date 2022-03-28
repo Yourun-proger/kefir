@@ -110,20 +110,14 @@ class TestKefirRepr(unittest.TestCase):
             {
                 "id": 42,
                 "attr": "kef not in attr! WHY?",
-                "a_obj": {"first": "kefir", "second": "project"}
+                "a_obj": {"first": "kefir", "second": "project"},
             },
         )
 
 
 class TestKefirSQLAlchemy(unittest.TestCase):
     def test_alchemy(self):
-        from sqlalchemy import (
-            create_engine,
-            Column,
-            Integer,
-            String,
-            ForeignKey
-        )
+        from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
         from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
         engine = create_engine("sqlite:///:memory:")
@@ -182,7 +176,7 @@ class TestKefirSQLAlchemy(unittest.TestCase):
                         }
                     ],
                     "id": 1,
-                    "email": "liame.bolb@bob"
+                    "email": "liame.bolb@bob",
                 },
                 "id": 1,
                 "address": "la rue",

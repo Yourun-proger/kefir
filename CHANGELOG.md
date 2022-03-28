@@ -1,9 +1,11 @@
 # v0.1.3
-In developement
+In development
 * Global restructuring to package.
 * Add deserialization support.
 * Big refactoring of `BaseKefir` class.
 * Add `@dump_route` decorator, that dump view-func result. Flask and FastAPI support.
+* Add `ASGIDumpMiddleware`, that dump view-func response. Works for FastAPI and (probably)
+  for any ASGI-based frameworks
 * Add (de)serealizing benchmarks.
 * Enable CI tests.
 # v0.1.2
@@ -19,4 +21,4 @@ In developement
 * Rename function `dump_to_dict` to `dump` for better typing.
 # v0.1.0
 07-08-2021
-Zero release.
+* Zero release.
