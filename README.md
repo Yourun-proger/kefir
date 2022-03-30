@@ -54,7 +54,7 @@ I created this only for fun and because i tired to write Schemas
 ## Contributing
 Open for issues as minimal feedback needed!
 
-Closed for pull requests as still raw...
+Now open for pull requests! See [kefir devguide](https://github.com/Yourun-proger/kefir/wiki/Developer-Guide).
 
 Also you can give me some feedback on [discusssion](https://github.com/Yourun-proger/kefir/discussions/2)
 ## Support Project
