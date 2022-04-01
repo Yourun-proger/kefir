@@ -17,6 +17,9 @@ class BaseKefir:
         self.datetime_format = datetime_format
         self.used = used
 
+    def _is_good_field(self, field, reprsnt, item, ignore):
+        return not field.startswith("_") and field not in reprsnt.ignore and item is not ignore
+
     def _add_look(self, dct, reprsnt):
         for name in reprsnt.look:
             try:
@@ -65,31 +68,29 @@ class BaseKefir:
         dct = {}
         reprsnt = self.represents.get(type(obj))
         if hasattr(obj, "__slots__"):
-            # make dict for objects with `__slots__`
-            obj_dct = {k: getattr(obj, k) for k in obj.__slots__}
+            fields_list = obj.__slots__
         else:
             # otherwise check if object is SQLAlchemy model
             if obj.__dict__.get("_sa_instance_state"):
-                obj_dct = (
+                fields_list = (
                     obj.__dict__["_sa_instance_state"]
                     .__dict__["manager"]
                     .__dict__["local_attrs"]
-                )
+                ).keys()
             else:
-                obj_dct = obj.__dict__
+                fields_list = obj.__dict__.keys()
         if reprsnt is not None:
-            for k, v in obj_dct.items():
-                item = getattr(obj, k)
-                if not k.startswith("_") and k not in reprsnt.ignore:
-                    if item is not ignore:
-                        if isinstance(item, (int, str, bool, dict, float)):
-                            dct[reprsnt.names_map.get(k, k)] = item
-                        elif isinstance(item, datetime.datetime):
-                            dct[reprsnt.names_map.get(k, k)] = item.strftime(
-                                reprsnt.datetime_format
-                            )
-                        else:
-                            dct[reprsnt.names_map.get(k, k)] = self.dump(item, obj)
+            for field in fields_list:
+                item = getattr(obj, field)
+                if self._is_good_field(field, reprsnt, item, ignore):
+                    if isinstance(item, (int, str, bool, dict, float)):
+                        dct[reprsnt.names_map.get(field, field)] = item
+                    elif isinstance(item, datetime.datetime):
+                        dct[reprsnt.names_map.get(field, field)] = item.strftime(
+                            reprsnt.datetime_format
+                        )
+                    else:
+                        dct[reprsnt.names_map.get(field, field)] = self.dump(item, obj)
             # i deleted `extra` field because this is not what i want to see
             # see here ->
             # https://github.com/Yourun-proger/kefir/wiki/Docs#what-worries-me
@@ -97,15 +98,15 @@ class BaseKefir:
             dct = self._add_look(dct, reprsnt)
             dct = self._validate(dct, reprsnt, "dump")
         else:
-            for k, v in obj_dct.items():
-                item = getattr(obj, k)
-                if not k.startswith("_") and item is not ignore:
+            for field in fields_list:
+                item = getattr(obj, field)
+                if not field.startswith("_") and item is not ignore:
                     if isinstance(item, (int, str, bool, dict, float)):
-                        dct[k] = item
+                        dct[field] = item
                     elif isinstance(item, datetime.datetime):
-                        dct[k] = item.strftime(self.datetime_format)
+                        dct[field] = item.strftime(self.datetime_format)
                     else:
-                        dct[k] = self.dump(item, obj)
+                        dct[field] = self.dump(item, obj)
         return dct
 
     def _dump_list(self, list_of_objs, ignore):
@@ -127,19 +128,24 @@ class BaseKefir:
             return lst
         if isinstance(dct, str):
             if dct.endswith(".json"):
-                with open(dct, "r") as json_file:
-                    dct = json.loads(json_file.read())
+                try:
+                    with open(dct, "r") as json_file:
+                        dct = json.loads(json_file.read())
+                except FileNotFoundError:
+                    raise ValueError(
+                        "\nWhere is json file?!\n" f'I can\'t found it here: "{dct}"'
+                    ) from None
             else:
                 raise ValueError(
-                    """If you want to feed me a json file,
-                                         please change/add the .json extension."""
+                    "\nIf you want to feed me a json file,\n"
+                    "please change/add the .json extension."
                 )
         reprsnt = self.represents.get(cls)
         if reprsnt is None:
             for k, v in dct.items():
                 if isinstance(v, dict):
                     raise NeedReprException(
-                        f"\nThis object with the nested data.\nAdd Repr for `{cls}` class!\n"
+                        f"\nThis object with the nested data.\nAdd Repr for `{cls.__name__}` class!\n"
                         f"In Repr, `{k}` field must be added to `loads` dict"
                     )
             if hasattr(cls, "__tablename__"):
