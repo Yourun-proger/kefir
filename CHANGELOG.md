@@ -1,4 +1,4 @@
-# v0.1.3
+# v0.2
 In development
 * Global restructuring to package.
 * Add deserialization support.

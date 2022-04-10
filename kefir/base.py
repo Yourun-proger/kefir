@@ -120,11 +120,11 @@ class BaseKefir:
             return self._dump_list(obj, ignore)
         return self._dump_obj(obj, ignore)
 
-    def load(self, dct, cls):
+    def load(self, dct, cls, allow_dict=False):
         if isinstance(dct, list):
             lst = []
             for item in dct:
-                lst.append(self.load(item, cls))
+                lst.append(self.load(item, cls, allow_dict))
             return lst
         if isinstance(dct, str):
             if dct.endswith(".json"):
@@ -143,7 +143,7 @@ class BaseKefir:
         reprsnt = self.represents.get(cls)
         if reprsnt is None:
             for k, v in dct.items():
-                if isinstance(v, dict):
+                if isinstance(v, dict) and not allow_dict:
                     raise NeedReprException(
                         f"\nThis object with the nested data.\nAdd Repr for `{cls.__name__}` class!\n"
                         f"In Repr, `{k}` field must be added to `loads` dict"
@@ -155,14 +155,15 @@ class BaseKefir:
             new_dct = {}
             names_map = {v: k for k, v in reprsnt.names_map.items()}
             for k, v in dct.items():
-                if isinstance(v, dict):
+                if isinstance(v, dict) and not allow_dict:
                     sub_cls = reprsnt.loads[names_map.get(k, k)]
+                    # i don't add `allow_dict` here because it's strange and dangerous!
                     new_dct[names_map.get(k, k)] = self.load(v, sub_cls)
                 elif isinstance(v, list):
                     new_dct[names_map.get(k, k)] = [
                         self.load(i, reprsnt.loads[k]) for i in v
                     ]
-                elif reprsnt.loads.get(names_map.get(k, k)) is datetime.datetime:
+                elif isinstance(reprsnt.loads.get(names_map.get(k, k)), datetime.datetime):
                     new_dct[names_map.get(k, k)] = datetime.datetime.strptime(
                         v, reprsnt.datetime_format
                     )
