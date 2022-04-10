@@ -6,7 +6,10 @@ In development
 * Add `@dump_route` decorator, that dump view-func result. Flask and FastAPI support.
 * Add `ASGIDumpMiddleware`, that dump view-func response. Works for FastAPI and (probably)
   for any ASGI-based frameworks
+* New test workflow system using `tox`
 * Add (de)serealizing benchmarks.
+* Add `allow_dict` param for `Kefir.load` method. The value of true means: "here a dictionary is a dictionary,
+  not a representation of an object"
 * Enable CI tests.
 # v0.1.2
 20-09-2021
