@@ -7,6 +7,11 @@
 # kefir
 kefir is a framework for convert SQLAlchemy models or complex objects to dict and back
 ## Install
+Just type:
+```bash
+$ pip install -e git+https://github.com/Yourun-proger/kefir.git#egg=kefir
+```
+Or like this if you want to do some changes:
 ```bash
 $ git clone https://github.com/Yourun-proger/kefir.git
 $ cd kefir
