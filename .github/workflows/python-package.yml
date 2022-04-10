@@ -23,7 +23,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7","3.8","3.9"]
+        include:
+          - {python-version: "3.7", tox: py37}
+          - {python-version: "3.8", tox: py38}
+          - {python-version: "3.8", tox: py39}
 
     steps:
     - uses: actions/checkout@v2
@@ -31,17 +34,12 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install requirements
+    - name: Update pip and setuptools
       run: |
         python -m pip install -U pip setuptools
-        pip install -r dev-requirements.txt
-    - name: Lints
-      run: |
-        flake8 kefir/ tests.py --ignore E501
+    - name: Install tox
+      run: pip install tox
     - name: Tests
-      run: |
-       python -m unittest
-    - name: Coverage
-      run: |
-       coverage run -m unittest
-       coverage report -m
+      run: tox -e ${{ matrix.tox }}
+    - name: Lints
+      run: tox -e lint

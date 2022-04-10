@@ -3,7 +3,9 @@ from kefir.kefs import SyncKefir
 
 class KefirFactory:
     @staticmethod
-    def makeKef(*args,):
+    def makeKef(
+        *args,
+    ):
         mode = args[-1]
         if mode.lower() == "sync":
             return SyncKefir(*args[:-1])

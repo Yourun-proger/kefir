@@ -163,7 +163,9 @@ class BaseKefir:
                     new_dct[names_map.get(k, k)] = [
                         self.load(i, reprsnt.loads[k]) for i in v
                     ]
-                elif isinstance(reprsnt.loads.get(names_map.get(k, k)), datetime.datetime):
+                elif isinstance(
+                    reprsnt.loads.get(names_map.get(k, k)), datetime.datetime
+                ):
                     new_dct[names_map.get(k, k)] = datetime.datetime.strptime(
                         v, reprsnt.datetime_format
                     )
