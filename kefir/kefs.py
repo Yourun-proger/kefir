@@ -61,5 +61,25 @@ class AsyncKefir(BaseKefir):
         super().__init__(represents, datetime_format, used)
 
     def dump_route(self, view_func):
-        # place for decorator that supports async view-functions
-        ...
+        # The functions are very similar... Am I breaking DRY?
+        # I guess I'll take Uncle Bob's advice and leave it as it is...
+        @functools.wraps(view_func)
+        async def dump_response(*args, **kwargs):
+            content = self.dump(await view_func(*args, **kwargs))
+            if self.used.lower() == "flask":
+                if FlaskResponse is None:
+                    raise PleaseInstallException(
+                        "If you want to use `dump_route`, please install Flask!"
+                    )
+                response = FlaskResponse(json.dump(content), mimetype="application/json")
+                return response
+            elif self.used.lower() == "fastapi":
+                if FastAPIResponse is None:
+                    raise PleaseInstallException(
+                        "If you want to use `dump_route`, please install FastAPI!"
+                    )
+                response = FastAPIResponse(content)
+                return response
+            else:
+                raise ValueError('`used` arg can be only "flask" or "fastapi" string')
+        return dump_response
