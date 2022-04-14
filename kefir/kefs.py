@@ -71,7 +71,9 @@ class AsyncKefir(BaseKefir):
                     raise PleaseInstallException(
                         "If you want to use `dump_route`, please install Flask!"
                     )
-                response = FlaskResponse(json.dump(content), mimetype="application/json")
+                response = FlaskResponse(
+                    json.dump(content), mimetype="application/json"
+                )
                 return response
             elif self.used.lower() == "fastapi":
                 if FastAPIResponse is None:
@@ -82,4 +84,5 @@ class AsyncKefir(BaseKefir):
                 return response
             else:
                 raise ValueError('`used` arg can be only "flask" or "fastapi" string')
+
         return dump_response
