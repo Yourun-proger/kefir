@@ -148,9 +148,13 @@ class BaseKefir:
                         f"\nThis object with the nested data.\nAdd Repr for `{cls.__name__}` class!\n"
                         f"In Repr, `{k}` field must be added to `loads` dict"
                     )
-            if hasattr(cls, "__tablename__"):
-                return cls(**dct)
-            return cls(*dct.values())
+            try:
+                if hasattr(cls, "__tablename__"):
+                    return cls(**dct)
+                return cls(*dct.values())
+            except TypeError as e:
+                err_msg = str(e).partition(')')[2]
+                raise DeserializationException(f"\nBad dict where are{err_msg}") from None
         else:
             new_dct = {}
             names_map = {v: k for k, v in reprsnt.names_map.items()}
@@ -172,6 +176,10 @@ class BaseKefir:
                 else:
                     new_dct[names_map.get(k, k)] = v
             new_dct = self._validate(new_dct, reprsnt, "load")
-            if hasattr(cls, "__tablename__"):
-                return cls(**new_dct)
-            return cls(*new_dct.values())
+            try:
+                if hasattr(cls, "__tablename__"):
+                    return cls(**new_dct)
+                return cls(*new_dct.values())
+            except TypeError as e:
+                err_msg = str(e).partition(')')[2]
+                raise DeserializationException(f"\nBad dict where are{err_msg}") from None
