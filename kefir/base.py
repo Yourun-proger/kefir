@@ -101,7 +101,7 @@ class BaseKefir:
             for field in fields_list:
                 item = getattr(obj, field)
                 if not field.startswith("_") and item is not ignore:
-                    if isinstance(item, (int, str, bool, dict, float)):
+                    if item is None or isinstance(item, (int, str, bool, dict, float)):
                         dct[field] = item
                     elif isinstance(item, datetime.datetime):
                         dct[field] = item.strftime(self.datetime_format)
