@@ -1,6 +1,7 @@
 import datetime
 import inspect
 import json
+import functools
 
 from kefir.exceptions import (
     NeedReprException,
@@ -10,12 +11,10 @@ from kefir.exceptions import (
 
 
 class BaseKefir:
-    def __init__(self, represents=None, datetime_format="%d.%m.%Y", used="flask"):
-        if represents is None:
-            represents = {}
+    def __init__(self, represents, plugin, datetime_format):
         self.represents = represents
+        self.plugin = plugin
         self.datetime_format = datetime_format
-        self.used = used
 
     def _is_good_field(self, field, reprsnt, item, ignore):
         return not field.startswith("_") and field not in reprsnt.ignore and item is not ignore
@@ -183,3 +182,20 @@ class BaseKefir:
             except TypeError as e:
                 err_msg = str(e).partition(')')[2]
                 raise DeserializationException(f"\nBad dict where are{err_msg}") from None
+
+    def dump_route(self, view_func):
+        @functools.wraps(view_func)
+        def dump_response(*args, **kwargs):
+            content = self.dump(view_func(*args, **kwargs))
+            response = self.plugin.make_response(content)
+            return response
+
+        @functools.wraps(view_func)
+        async def async_dump_response(*args, **kwargs):
+            content = self.dump(await view_func(*args, **kwargs))
+            response = self.plugin.make_response(content)
+            return response
+
+        if self.plugin.IS_ASYNC:
+            return async_dump_response
+        return dump_response

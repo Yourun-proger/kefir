@@ -1,6 +1,7 @@
 # v0.2
 In development
 * Global restructuring to package.
+* Another architecture changes. I'll write about it more in docs.
 * Add deserialization support.
 * Big refactoring of `BaseKefir` class.
 * Add `@dump_route` decorator, that dump view-func result. Flask and FastAPI support.

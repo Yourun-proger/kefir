@@ -1,21 +1,18 @@
-from kefir.kefs import SyncKefir, AsyncKefir
+from kefir.base import BaseKefir
+from kefir.plugins import PLUGINS, BasePlugin
 
 
 class KefirFactory:
     @staticmethod
-    def makeKef(
-        *args,
-    ):
-        mode = args[-1]
-        if mode.lower() == "sync":
-            return SyncKefir(*args[:-1])
-        elif mode.lower() == "async":
-            print(
-                """Just tell you that mode='async' this is all about view-functions
-                    that kefir can decorate with @dump_route
-                    Now this class has no async methods!
-                    More here: https://github.com/Yourun-proger/kefir/wiki/Docs#async-support"""
-            )
-            return AsyncKefir(*args[:-1])
-        else:
-            raise ValueError('"mode" argumnet must be "sync" or "async" string!!11')
+    def build_kef(represents=None, plugin='flask', datetime_format='%d.%m.%Y'):
+        if represents is None:
+            represents = {}
+
+        if not isinstance(plugin, BasePlugin):
+            plugin = PLUGINS[plugin]
+
+        return BaseKefir(
+            represents=represents,
+            plugin=plugin,
+            datetime_format=datetime_format
+        )

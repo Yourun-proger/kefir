@@ -1,6 +1,5 @@
 class Repr:
     ignore = ()
-    # extra = {}
     look = ()
     names_map = {}
     validate = ()
