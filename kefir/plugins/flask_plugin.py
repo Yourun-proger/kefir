@@ -4,7 +4,7 @@ import json
 from flask import Response
 
 
-class Flask(BasePlugin):
+class FlaskPlugin(BasePlugin):
     IS_ASYNC = False
 
     @staticmethod
