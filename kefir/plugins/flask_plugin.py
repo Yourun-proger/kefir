@@ -1,12 +1,19 @@
 from .base import BasePlugin
 
 import json
-from flask import Response
+
+
+try:
+    from flask import Response
+except ImportError:
+    Response = None
 
 
 class FlaskPlugin(BasePlugin):
-    IS_ASYNC = False
+    NAME = 'flask'
+    RESPONSE_CLASS = Response
+    ADDITIONAL_KWARGS = {'mimetype': 'application/json'}
 
-    @staticmethod
-    def make_response(content):
-        return Response(json.dumps(content), mimetype='application/json')
+    @classmethod
+    def make_content(cls, data):
+        return json.dumps(data)

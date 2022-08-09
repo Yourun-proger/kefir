@@ -1,5 +1,6 @@
 from kefir.base import BaseKefir
-from kefir.plugins import PLUGINS, BasePlugin
+from kefir.plugins import PLUGINS
+from kefir.plugins.base import BasePlugin
 
 
 class KefirFactory:

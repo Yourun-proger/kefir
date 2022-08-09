@@ -1,11 +1,19 @@
 from .base import BasePlugin
 
-from fastapi.responses import JSONResponse
+
+try:
+    from fastapi.responses import JSONResponse
+except ImportError:
+    JSONResponse = None
 
 
 class FastAPIPlugin(BasePlugin):
+    NAME = 'fastapi'
+    RESPONSE_CLASS = JSONResponse
     IS_ASYNC = True
 
-    @staticmethod
-    def make_response(content):
-        return JSONResponse(content)
+    @classmethod
+    def make_content(cls, data):
+        # yes maybe it looks weird and stupid
+        # but it must be so
+        return data
