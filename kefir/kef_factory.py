@@ -9,8 +9,15 @@ class KefirFactory:
         if represents is None:
             represents = {}
 
-        if not isinstance(plugin, BasePlugin):
-            plugin = PLUGINS[plugin]
+        if isinstance(plugin, str):
+            try:
+                plugin = PLUGINS[plugin]
+            except KeyError:
+                raise ValueError(
+                        f"Plugin name must be one of: {*plugins}"
+                ) from None
+        elif not isinstance(plugin, BasePlugin):
+            raise ValueError(f"Plugin argumnet must be string ({*plugins}) or class")
 
         return BaseKefir(
             represents=represents,
